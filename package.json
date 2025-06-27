@@ -40,7 +40,7 @@
         "zod": "^3.23.8"
     },
     "peerDependencies": {
-        "@vendure/cli": "^3.0.0"
+        "@vendure/cli": "3.4.0-minor-202506250934"
     },
     "devDependencies": {
         "@vendure/cli": "3.4.0-minor-202506250934",
