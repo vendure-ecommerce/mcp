@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "vendure-cli": {
+      "command": "node",
+      "args": ["./dist/server.js"],
+      "env": {},
+      "description": "Vendure CLI orchestration via MCP"
+    }
+  }
+} 

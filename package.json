@@ -1,0 +1,55 @@
+{
+    "name": "vendure-mcp-server",
+    "version": "1.0.0",
+    "description": "Independent MCP server for Vendure CLI orchestration",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/YOUR_USERNAME/vendure-mcp-server"
+    },
+    "keywords": [
+        "vendure",
+        "mcp",
+        "cli",
+        "orchestration",
+        "server"
+    ],
+    "homepage": "https://github.com/YOUR_USERNAME/vendure-mcp-server",
+    "private": false,
+    "license": "MIT",
+    "type": "module",
+    "main": "dist/server.js",
+    "scripts": {
+        "build": "rimraf dist && tsc",
+        "watch": "tsc --watch",
+        "start": "node dist/server.js",
+        "start:http": "node dist/server.js --transport http --port 8000",
+        "dev": "tsx src/server.ts",
+        "dev:http": "tsx src/server.ts --transport http --port 8000",
+        "prepublishOnly": "npm run build"
+    },
+    "bin": {
+        "vendure-mcp": "dist/server.js"
+    },
+    "files": [
+        "dist/**/*",
+        "README.md",
+        "example-config.json"
+    ],
+    "dependencies": {
+        "fastmcp": "^1.0.0",
+        "zod": "^3.23.8"
+    },
+    "peerDependencies": {
+        "@vendure/cli": "^3.0.0"
+    },
+    "devDependencies": {
+        "@vendure/cli": "3.4.0-minor-202506250934",
+        "@types/node": "^20.0.0",
+        "rimraf": "^5.0.0",
+        "tsx": "^4.0.0",
+        "typescript": "^5.8.2"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    }
+} 
