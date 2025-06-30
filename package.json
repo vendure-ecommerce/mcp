@@ -25,6 +25,9 @@
         "start:http": "node dist/server.js --transport http --port 8000",
         "dev": "tsx src/server.ts",
         "dev:http": "tsx src/server.ts --transport http --port 8000",
+        "lint": "eslint --fix",
+        "format": "prettier --write",
+        "prepare": "husky install",
         "prepublishOnly": "npm run build"
     },
     "bin": {
@@ -43,13 +46,43 @@
         "@vendure/cli": "3.4.0-minor-202506250934"
     },
     "devDependencies": {
-        "@vendure/cli": "3.4.0-minor-202506250934",
+        "@commitlint/cli": "^19.1.0",
+        "@commitlint/config-conventional": "^19.1.0",
         "@types/node": "^20.0.0",
+        "@typescript-eslint/eslint-plugin": "^6.21.0",
+        "@typescript-eslint/parser": "^6.21.0",
+        "@vendure/cli": "3.4.0-minor-202506250934",
+        "eslint": "^8.41.0",
+        "eslint-config-prettier": "^8.8.0",
+        "eslint-plugin-import": "^2.27.5",
+        "husky": "^8.0.3",
+        "lint-staged": "^15.2.0",
+        "prettier": "^3.2.5",
         "rimraf": "^5.0.0",
         "tsx": "^4.0.0",
         "typescript": "^5.8.2"
     },
     "engines": {
         "node": ">=18.0.0"
+    },
+    "commitlint": {
+        "extends": [
+            "@commitlint/config-conventional"
+        ],
+        "rules": {
+            "subject-case": [
+                2,
+                "always",
+                [
+                    "sentence-case"
+                ]
+            ]
+        }
+    },
+    "lint-staged": {
+        "src/**/*.ts": [
+            "npm run lint",
+            "npm run format"
+        ]
     }
-} 
+}
