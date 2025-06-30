@@ -31,6 +31,29 @@ function createZodSchemaFromCliOptions(command: CliCommandDefinition): z.ZodObje
         projectPath: z.string().describe('Path to the Vendure project directory (required)'),
     };
 
+    // Enhanced descriptions for specific commands and parameters
+    const enhancedDescriptions: Record<string, Record<string, string>> = {
+        add: {
+            plugin: 'Create a new plugin with the specified name. Example: "MyNewPlugin"',
+            entity: 'Add a new entity with the specified class name. Example: "Product" or "Customer". Requires selectedPlugin to be specified.',
+            selectedPlugin: 'Name of the plugin to add the entity/service/api-extension to. Must be an existing plugin name. Example: "my-plugin" or "test-plugin"',
+            service: 'Add a new service with the specified class name. Example: "ProductService" or "OrderService". Requires selectedPlugin to be specified.',
+            type: 'Type of service: "basic" or "entity" (default: basic). Use "entity" when working with database entities.',
+            selectedEntity: 'Name of the entity for entity service (automatically sets type to entity). Example: "Product"',
+            jobQueue: 'Add job-queue support to the specified plugin. Provide the plugin name. Example: "my-plugin"',
+            name: 'Name for the job queue (required with jobQueue). Example: "email-queue" or "product-import-queue"',
+            selectedService: 'Name of the service to add the job queue or API extension to. Must be an existing service. Example: "ProductService"',
+            codegen: 'Add GraphQL codegen configuration to the specified plugin. Provide the plugin name. Example: "my-plugin"',
+            apiExtension: 'Add an API extension scaffold to the specified plugin. Provide the plugin name. Example: "my-plugin". Requires queryName or mutationName and selectedService.',
+            queryName: 'Name for the GraphQL query (used with apiExtension). Example: "customProducts" or "getSpecialOffers"',
+            mutationName: 'Name for the GraphQL mutation (used with apiExtension). Example: "createCustomOrder" or "updateSpecialPrice"',
+            uiExtensions: 'Add Admin UI extensions setup to the specified plugin. Provide the plugin name. Example: "my-plugin"',
+            customFields: 'Add custom fields support to the entity (boolean flag)',
+            translatable: 'Make the entity translatable (boolean flag)',
+            config: 'Specify the path to a custom Vendure config file. Example: "./custom-vendure-config.ts"'
+        }
+    };
+
     function processOptions(options: CliCommandOption[]) {
         for (const option of options) {
             // Extract the parameter name from the long option (e.g., '--plugin <n>' -> 'plugin')
@@ -45,7 +68,7 @@ function createZodSchemaFromCliOptions(command: CliCommandDefinition): z.ZodObje
             if (option.long.includes('[') || option.long.includes('<')) {
                 // Parameter accepts a value
                 if (option.long.includes('[')) {
-                    // Optional value (e.g., '--job-queue [plugin]')
+                    // Optional value (e.g., '--api-extension [plugin]')
                     zodType = z.union([z.string(), z.boolean()]).optional();
                 } else {
                     // Required value (e.g., '--plugin <n>')
@@ -56,8 +79,10 @@ function createZodSchemaFromCliOptions(command: CliCommandDefinition): z.ZodObje
                 zodType = z.boolean().optional();
             }
 
-            // Add description from CLI command
-            zodType = zodType.describe(option.description);
+            // Use enhanced description if available, otherwise fall back to CLI description
+            const enhancedDesc = enhancedDescriptions[command.name]?.[paramName];
+            const description = enhancedDesc || option.description;
+            zodType = zodType.describe(description);
 
             if (!option.required) {
                 zodType = zodType.optional();
@@ -78,6 +103,25 @@ function createZodSchemaFromCliOptions(command: CliCommandDefinition): z.ZodObje
 
     return z.object(schemaFields);
 }
+
+// Enhanced command descriptions for better AI agent understanding
+const enhancedCommandDescriptions: Record<string, string> = {
+    add: `Add features to your Vendure project. 
+
+IMPORTANT USAGE PATTERNS:
+- For API Extension: Requires apiExtension="plugin-name", plus queryName OR mutationName, plus selectedService
+- For Entity: Requires entity="EntityName" and selectedPlugin="plugin-name"  
+- For Service: Requires service="ServiceName" and selectedPlugin="plugin-name"
+- For Job Queue: Requires jobQueue="plugin-name", name="queue-name", and selectedService="service-name"
+
+EXAMPLES:
+- Add API extension: {apiExtension: "my-plugin", queryName: "customProducts", selectedService: "ProductService"}
+- Add entity: {entity: "CustomProduct", selectedPlugin: "my-plugin"}
+- Add service: {service: "CustomService", selectedPlugin: "my-plugin"}
+- Create new plugin: {plugin: "MyNewPlugin"}
+
+Use list_plugins tool first to see available plugin names.`
+};
 
 // Legacy function for compatibility with non-add commands
 async function executeVendureCommand(args: string[], projectPath: string): Promise<string> {
@@ -188,10 +232,13 @@ function formatOptionsForCli(options: Record<string, any>): string[] {
 // Dynamically register MCP tools based on CLI command definitions
 for (const command of cliCommands) {
     const schema = createZodSchemaFromCliOptions(command);
+    
+    // Use enhanced description if available, otherwise fall back to CLI description
+    const description = enhancedCommandDescriptions[command.name] || command.description;
 
     server.addTool({
         name: `vendure_${command.name}`,
-        description: command.description,
+        description: description,
         parameters: schema,
         execute: async args => {
             return await executeMcpOperation(command.name, args);
@@ -209,6 +256,129 @@ server.addTool({
         const commandsList = cliCommands.map(cmd => `• ${cmd.name}: ${cmd.description}`).join('\n');
 
         return `Available Vendure CLI commands via MCP:\n\n${commandsList}\n\nProject path: ${args.projectPath}`;
+    },
+});
+
+// Add a helper tool for understanding how to use vendure_add
+server.addTool({
+    name: 'vendure_add_help',
+    description: 'Get detailed guidance on how to use the vendure_add tool with correct parameter combinations',
+    parameters: z.object({
+        operation: z.enum(['api-extension', 'entity', 'service', 'plugin', 'job-queue', 'ui-extensions', 'codegen', 'all']).optional().describe('Specific operation to get help for, or "all" for complete guide')
+    }),
+    // eslint-disable-next-line @typescript-eslint/require-await
+    execute: async args => {
+        const guides: Record<string, string> = {
+            'api-extension': `
+📋 API EXTENSION GUIDE:
+
+Required Parameters:
+- projectPath: "/path/to/vendure/project"
+- apiExtension: "plugin-name" (must be existing plugin)
+- selectedService: "ServiceName" (must be existing service in the plugin)
+- queryName: "customQueryName" OR mutationName: "customMutationName" (at least one required)
+
+Example:
+{
+  "projectPath": "/path/to/project",
+  "apiExtension": "my-plugin",
+  "queryName": "getCustomProducts", 
+  "selectedService": "ProductService"
+}
+
+💡 TIP: Use list_plugins tool first to see available plugins and services.`,
+
+            'entity': `
+📋 ENTITY GUIDE:
+
+Required Parameters:
+- projectPath: "/path/to/vendure/project"
+- entity: "EntityClassName" (PascalCase)
+- selectedPlugin: "plugin-name" (must be existing plugin)
+
+Optional Parameters:
+- customFields: true (adds custom fields support)
+- translatable: true (makes entity translatable)
+
+Example:
+{
+  "projectPath": "/path/to/project",
+  "entity": "CustomProduct",
+  "selectedPlugin": "my-plugin",
+  "customFields": true
+}`,
+
+            'service': `
+📋 SERVICE GUIDE:
+
+Required Parameters:
+- projectPath: "/path/to/vendure/project"
+- service: "ServiceClassName" (PascalCase)
+- selectedPlugin: "plugin-name" (must be existing plugin)
+
+Optional Parameters:
+- type: "basic" | "entity" (default: basic)
+- selectedEntity: "EntityName" (auto-sets type to entity)
+
+Example:
+{
+  "projectPath": "/path/to/project",
+  "service": "CustomProductService",
+  "selectedPlugin": "my-plugin",
+  "type": "entity",
+  "selectedEntity": "Product"
+}`,
+
+            'plugin': `
+📋 PLUGIN GUIDE:
+
+Required Parameters:
+- projectPath: "/path/to/vendure/project" 
+- plugin: "PluginName" (PascalCase)
+
+Example:
+{
+  "projectPath": "/path/to/project",
+  "plugin": "MyAwesomePlugin"
+}`,
+
+            'job-queue': `
+📋 JOB QUEUE GUIDE:
+
+Required Parameters:
+- projectPath: "/path/to/vendure/project"
+- jobQueue: "plugin-name" (must be existing plugin)
+- name: "queue-name" (kebab-case recommended)
+- selectedService: "ServiceName" (must be existing service)
+
+Example:
+{
+  "projectPath": "/path/to/project",
+  "jobQueue": "my-plugin",
+  "name": "email-sending-queue",
+  "selectedService": "EmailService"
+}`
+        };
+
+        if (args.operation && args.operation !== 'all') {
+            return guides[args.operation] || `No guide available for operation: ${args.operation}`;
+        }
+
+        return `
+🔧 VENDURE ADD TOOL COMPLETE GUIDE:
+
+${Object.entries(guides).map(([op, guide]) => guide).join('\n\n')}
+
+⚠️  COMMON MISTAKES TO AVOID:
+1. Using non-existent plugin names (use list_plugins first)
+2. Missing required parameter combinations
+3. Wrong casing (use PascalCase for class names, kebab-case for plugin names)
+4. For API extensions: forgetting selectedService or query/mutation names
+
+🔍 DISCOVERY TOOLS:
+- list_plugins: See all available plugins and their services
+- vendure_add_help: Get specific guidance for operations
+`;
     },
 });
 
