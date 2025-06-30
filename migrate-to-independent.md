@@ -9,8 +9,8 @@ This guide explains how to extract the MCP package from the Vendure monorepo and
 ```bash
 # Create new repository on GitHub
 # Clone it locally
-git clone https://github.com/YOUR_USERNAME/vendure-mcp-server.git
-cd vendure-mcp-server
+git clone https://github.com/vendure-ecommerce/mcp.git
+cd vendure-mcp
 ```
 
 ### 2. Copy Package Files
@@ -56,9 +56,9 @@ In `package.json`, update these fields to your actual repository:
 {
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/vendure-mcp-server"
+    "url": "https://github.com/vendure-ecommerce/mcp.git"
   },
-  "homepage": "https://github.com/YOUR_USERNAME/vendure-mcp-server"
+  "homepage": "https://github.com/vendure-ecommerce/mcp"
 }
 ```
 
@@ -166,4 +166,12 @@ With an independent repository, you can:
 - Implement custom Vendure project analysis tools
 - Add web dashboard for HTTP mode
 - Create plugins for popular editors
-- Build community around Vendure automation tools 
+- Build community around Vendure automation tools
+
+## 🔗 Links
+
+- [Vendure Documentation](https://www.vendure.io/docs/)
+- [MCP Specification](https://spec.modelcontextprotocol.io/)
+- [GitHub Repository](https://github.com/vendure-ecommerce/mcp)
+
+--- 

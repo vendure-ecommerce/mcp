@@ -27,8 +27,8 @@ npm install vendure-mcp-server
 ### From Source
 
 ```bash
-git clone https://github.com/vendure/vendure-mcp-server.git
-cd vendure-mcp-server
+git clone https://github.com/vendure-ecommerce/mcp.git
+cd vendure-mcp
 npm install
 npm run build
 ```
@@ -128,8 +128,8 @@ The server dynamically generates MCP tools from Vendure CLI command definitions.
 
 ### Building from Source
 ```bash
-git clone <your-repo>
-cd vendure-mcp-server
+git clone https://github.com/vendure-ecommerce/mcp.git
+cd vendure-mcp
 npm install
 npm run build
 ```
@@ -171,6 +171,7 @@ Follow our [contributing guide](https://github.com/vendure-ecommerce/vendure/blo
 
 ## Links
 
-- [Vendure Core](https://github.com/vendure-ecommerce/vendure) 
+- [Vendure Core](https://github.com/vendure-ecommerce/vendure)
 - [Vendure Documentation](https://www.vendure.io/docs/)
 - [MCP Specification](https://spec.modelcontextprotocol.io/)
+- [GitHub Repository](https://github.com/vendure-ecommerce/mcp)
