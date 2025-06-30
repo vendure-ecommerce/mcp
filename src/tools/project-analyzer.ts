@@ -4,7 +4,7 @@ import path from 'path';
 /**
  * List all plugins in the Vendure project by analyzing the project structure
  */
-export async function listPlugins(projectPath: string): Promise<string> {
+export function listPlugins(projectPath: string): string {
     try {
         const absoluteProjectPath = path.isAbsolute(projectPath)
             ? projectPath
@@ -32,10 +32,7 @@ export async function listPlugins(projectPath: string): Promise<string> {
                         // Look for plugin files
                         const pluginFiles = fs
                             .readdirSync(path.join(pluginDir, item.name))
-                            .filter(
-                                (file) =>
-                                    file.endsWith('.plugin.ts') || file.endsWith('.plugin.js'),
-                            );
+                            .filter(file => file.endsWith('.plugin.ts') || file.endsWith('.plugin.js'));
                         if (pluginFiles.length > 0) {
                             plugins.push(`${item.name} (${pluginFiles.join(', ')})`);
                         }
@@ -57,7 +54,7 @@ export async function listPlugins(projectPath: string): Promise<string> {
                 const content = fs.readFileSync(configPath, 'utf8');
                 // Look for plugin imports (basic regex matching)
                 const pluginImports = content.match(/import.*Plugin.*from.*['"](.*)['"]/g) || [];
-                importedPlugins.push(...pluginImports.map((imp) => imp.trim()));
+                importedPlugins.push(...pluginImports.map(imp => imp.trim()));
                 break;
             }
         }
@@ -66,7 +63,7 @@ export async function listPlugins(projectPath: string): Promise<string> {
 
         if (plugins.length > 0) {
             result += `🔌 Custom Plugins Found (${plugins.length}):\n`;
-            plugins.forEach((plugin) => (result += `  • ${plugin}\n`));
+            plugins.forEach(plugin => (result += `  • ${plugin}\n`));
             result += '\n';
         } else {
             result += '🔌 No custom plugins found in standard directories\n\n';
@@ -74,7 +71,7 @@ export async function listPlugins(projectPath: string): Promise<string> {
 
         if (importedPlugins.length > 0) {
             result += `📦 Plugin Imports in Config (${importedPlugins.length}):\n`;
-            importedPlugins.forEach((imp) => (result += `  • ${imp}\n`));
+            importedPlugins.forEach(imp => (result += `  • ${imp}\n`));
             result += '\n';
         }
 
@@ -90,7 +87,7 @@ export async function listPlugins(projectPath: string): Promise<string> {
 /**
  * Analyze the overall structure of a Vendure project including entities, services, and configuration
  */
-export async function analyzeProjectStructure(projectPath: string): Promise<string> {
+export function analyzeProjectStructure(projectPath: string): string {
     try {
         const absoluteProjectPath = path.isAbsolute(projectPath)
             ? projectPath
@@ -111,19 +108,13 @@ export async function analyzeProjectStructure(projectPath: string): Promise<stri
         // Analyze src directory structure
         const srcDir = path.join(absoluteProjectPath, 'src');
         if (fs.existsSync(srcDir)) {
-            const analyzeDirectory = (
-                dir: string,
-                category: keyof typeof analysis,
-                pattern: RegExp,
-            ) => {
+            const analyzeDirectory = (dir: string, category: keyof typeof analysis, pattern: RegExp) => {
                 if (fs.existsSync(dir)) {
                     const files = fs.readdirSync(dir, { recursive: true, withFileTypes: true });
-                    files.forEach((file) => {
+                    files.forEach(file => {
                         if (file.isFile() && pattern.test(file.name)) {
                             const filePath = file.path ?? '';
-                            analysis[category].push(
-                                path.relative(srcDir, path.join(filePath, file.name)),
-                            );
+                            analysis[category].push(path.relative(srcDir, path.join(filePath, file.name)));
                         }
                     });
                 }
@@ -143,7 +134,7 @@ export async function analyzeProjectStructure(projectPath: string): Promise<stri
             if (fs.existsSync(migDir)) {
                 const migrations = fs
                     .readdirSync(migDir)
-                    .filter((file) => file.endsWith('.ts') || file.endsWith('.js'));
+                    .filter(file => file.endsWith('.ts') || file.endsWith('.js'));
                 analysis.migrations.push(...migrations);
                 break;
             }
@@ -158,7 +149,7 @@ export async function analyzeProjectStructure(projectPath: string): Promise<stri
             'package.json',
             'tsconfig.json',
         ];
-        configFiles.forEach((file) => {
+        configFiles.forEach(file => {
             if (fs.existsSync(path.join(absoluteProjectPath, file))) {
                 analysis.configFiles.push(file);
             }
@@ -169,7 +160,7 @@ export async function analyzeProjectStructure(projectPath: string): Promise<stri
 
         result += `🏗️  Entities (${analysis.entities.length}):\n`;
         if (analysis.entities.length > 0) {
-            analysis.entities.forEach((entity) => (result += `  • ${entity}\n`));
+            analysis.entities.forEach(entity => (result += `  • ${entity}\n`));
         } else {
             result += '  No custom entities found\n';
         }
@@ -177,7 +168,7 @@ export async function analyzeProjectStructure(projectPath: string): Promise<stri
 
         result += `⚙️  Services (${analysis.services.length}):\n`;
         if (analysis.services.length > 0) {
-            analysis.services.forEach((service) => (result += `  • ${service}\n`));
+            analysis.services.forEach(service => (result += `  • ${service}\n`));
         } else {
             result += '  No custom services found\n';
         }
@@ -185,7 +176,7 @@ export async function analyzeProjectStructure(projectPath: string): Promise<stri
 
         result += `🔌 Plugins (${analysis.plugins.length}):\n`;
         if (analysis.plugins.length > 0) {
-            analysis.plugins.forEach((plugin) => (result += `  • ${plugin}\n`));
+            analysis.plugins.forEach(plugin => (result += `  • ${plugin}\n`));
         } else {
             result += '  No custom plugins found\n';
         }
@@ -193,9 +184,7 @@ export async function analyzeProjectStructure(projectPath: string): Promise<stri
 
         result += `🗄️  Migrations (${analysis.migrations.length}):\n`;
         if (analysis.migrations.length > 0) {
-            analysis.migrations
-                .slice(0, 5)
-                .forEach((migration) => (result += `  • ${migration}\n`));
+            analysis.migrations.slice(0, 5).forEach(migration => (result += `  • ${migration}\n`));
             if (analysis.migrations.length > 5) {
                 result += `  ... and ${analysis.migrations.length - 5} more\n`;
             }
@@ -205,7 +194,7 @@ export async function analyzeProjectStructure(projectPath: string): Promise<stri
         result += '\n';
 
         result += `📋 Config Files (${analysis.configFiles.length}):\n`;
-        analysis.configFiles.forEach((config) => (result += `  • ${config}\n`));
+        analysis.configFiles.forEach(config => (result += `  • ${config}\n`));
 
         return result;
     } catch (error) {
@@ -217,7 +206,7 @@ export async function analyzeProjectStructure(projectPath: string): Promise<stri
 /**
  * Check if Vendure CLI is properly installed and what version is available in the project
  */
-export async function checkVendureInstallation(projectPath: string): Promise<string> {
+export function checkVendureInstallation(projectPath: string): string {
     try {
         const absoluteProjectPath = path.isAbsolute(projectPath)
             ? projectPath

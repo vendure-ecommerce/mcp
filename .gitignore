@@ -41,4 +41,30 @@ coverage/
 
 # Temporary folders
 .tmp/
-.temp/ 
+.temp/
+
+# Editor and IDE specific
+.history
+.cursor/
+.vscode/settings.json
+.vscode/launch.json
+
+# Build and cache
+*.cache
+.eslintcache
+
+# Test and debugging
+.nyc_output/
+
+# Package manager locks and caches
+.npm/
+.yarn/
+yarn.lock
+pnpm-lock.yaml
+
+# Backup files
+*.backup
+*.bak
+
+# Error logs
+lerna-debug.log 

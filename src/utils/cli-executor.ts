@@ -1,9 +1,8 @@
+import type { AddOperationOptions } from '@vendure/cli/dist/commands/add/add-operations.js';
+import { performAddOperation } from '@vendure/cli/dist/commands/add/add-operations.js';
 import { spawn } from 'child_process';
 import fs from 'fs';
 import path from 'path';
-
-import type { AddOperationOptions } from '@vendure/cli/dist/commands/add/add-operations.js';
-import { performAddOperation } from '@vendure/cli/dist/commands/add/add-operations.js';
 
 /**
  * Execute a Vendure CLI command by spawning the process
@@ -43,15 +42,15 @@ export async function executeVendureCommand(args: string[], projectPath: string)
         let stdout = '';
         let stderr = '';
 
-        child.stdout?.on('data', (data) => {
+        child.stdout?.on('data', data => {
             stdout += data.toString();
         });
 
-        child.stderr?.on('data', (data) => {
+        child.stderr?.on('data', data => {
             stderr += data.toString();
         });
 
-        child.on('close', (code) => {
+        child.on('close', code => {
             if (code === 0) {
                 resolve(stdout);
             } else {
@@ -59,7 +58,7 @@ export async function executeVendureCommand(args: string[], projectPath: string)
             }
         });
 
-        child.on('error', (err) => {
+        child.on('error', err => {
             reject(err);
         });
     });
@@ -68,10 +67,7 @@ export async function executeVendureCommand(args: string[], projectPath: string)
 /**
  * Execute CLI operations through the MCP interface
  */
-export async function executeMcpOperation(
-    commandName: string,
-    args: Record<string, any>,
-): Promise<string> {
+export async function executeMcpOperation(commandName: string, args: Record<string, any>): Promise<string> {
     const { projectPath, ...options } = args;
 
     try {

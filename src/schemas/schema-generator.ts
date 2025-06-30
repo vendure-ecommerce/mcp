@@ -1,8 +1,8 @@
-import { z } from 'zod';
 import type {
     CliCommandDefinition,
     CliCommandOption,
 } from '@vendure/cli/dist/shared/cli-command-definition.js';
+import { z } from 'zod';
 
 import { enhancedParameterDescriptions } from './enhanced-descriptions.js';
 

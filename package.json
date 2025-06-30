@@ -53,11 +53,12 @@
         "@typescript-eslint/parser": "^6.21.0",
         "@vendure/cli": "3.4.0-minor-202506250934",
         "eslint": "^8.41.0",
-        "eslint-config-prettier": "^8.8.0",
-        "eslint-plugin-import": "^2.27.5",
+        "eslint-config-prettier": "^8.10.0",
+        "eslint-plugin-import": "^2.32.0",
         "husky": "^8.0.3",
         "lint-staged": "^15.2.0",
         "prettier": "^3.2.5",
+        "prettier-plugin-organize-imports": "^4.1.0",
         "rimraf": "^5.0.0",
         "tsx": "^4.0.0",
         "typescript": "^5.8.2"
@@ -78,11 +79,5 @@
                 ]
             ]
         }
-    },
-    "lint-staged": {
-        "src/**/*.ts": [
-            "npm run lint",
-            "npm run format"
-        ]
     }
 }
