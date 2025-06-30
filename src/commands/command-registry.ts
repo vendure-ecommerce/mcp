@@ -1,0 +1,114 @@
+import type { FastMCP } from 'fastmcp';
+import { cliCommands } from '@vendure/cli/dist/commands/command-declarations.js';
+
+import { baseSchema, helpSchema } from '../schemas/base-schemas.js';
+import { enhancedCommandDescriptions } from '../schemas/enhanced-descriptions.js';
+import { createZodSchemaFromCliOptions } from '../schemas/schema-generator.js';
+import { executeMcpOperation } from '../utils/cli-executor.js';
+import { generateHelpContent } from '../tools/help-tool.js';
+import {
+    listPlugins,
+    analyzeProjectStructure,
+    checkVendureInstallation,
+} from '../tools/project-analyzer.js';
+
+/**
+ * Register all MCP tools with the FastMCP server
+ */
+export function registerAllTools(server: FastMCP): void {
+    // Register dynamic CLI command tools
+    registerCliCommandTools(server);
+
+    // Register utility tools
+    registerUtilityTools(server);
+
+    // Register project analysis tools
+    registerProjectAnalysisTools(server);
+}
+
+/**
+ * Register tools based on CLI command definitions
+ */
+function registerCliCommandTools(server: FastMCP): void {
+    for (const command of cliCommands) {
+        const schema = createZodSchemaFromCliOptions(command);
+
+        // Use enhanced description if available, otherwise fall back to CLI description
+        const description = enhancedCommandDescriptions[command.name] || command.description;
+
+        server.addTool({
+            name: `vendure_${command.name}`,
+            description: description,
+            parameters: schema,
+            execute: async (args) => {
+                return await executeMcpOperation(command.name, args);
+            },
+        });
+    }
+}
+
+/**
+ * Register utility tools (list commands, help)
+ */
+function registerUtilityTools(server: FastMCP): void {
+    // List available commands
+    server.addTool({
+        name: 'list_commands',
+        description: 'List all available Vendure CLI commands accessible via MCP',
+        parameters: baseSchema,
+        execute: async (args) => {
+            const commandsList = cliCommands
+                .map((cmd) => `• ${cmd.name}: ${cmd.description}`)
+                .join('\n');
+            return `Available Vendure CLI commands via MCP:\n\n${commandsList}\n\nProject path: ${args.projectPath}`;
+        },
+    });
+
+    // Help tool for vendure_add command
+    server.addTool({
+        name: 'vendure_add_help',
+        description:
+            'Get detailed guidance on how to use the vendure_add tool with correct parameter combinations',
+        parameters: helpSchema,
+        execute: async (args) => {
+            return generateHelpContent(args.operation);
+        },
+    });
+}
+
+/**
+ * Register project analysis tools
+ */
+function registerProjectAnalysisTools(server: FastMCP): void {
+    // List plugins
+    server.addTool({
+        name: 'list_plugins',
+        description: 'List all plugins in the Vendure project by analyzing the project structure',
+        parameters: baseSchema,
+        execute: async (args) => {
+            return await listPlugins(args.projectPath);
+        },
+    });
+
+    // Analyze project structure
+    server.addTool({
+        name: 'analyze_project_structure',
+        description:
+            'Analyze the overall structure of a Vendure project including entities, services, and configuration',
+        parameters: baseSchema,
+        execute: async (args) => {
+            return await analyzeProjectStructure(args.projectPath);
+        },
+    });
+
+    // Check Vendure installation
+    server.addTool({
+        name: 'check_vendure_installation',
+        description:
+            'Check if Vendure CLI is properly installed and what version is available in the project',
+        parameters: baseSchema,
+        execute: async (args) => {
+            return await checkVendureInstallation(args.projectPath);
+        },
+    });
+}

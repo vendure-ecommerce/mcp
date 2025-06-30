@@ -6,10 +6,14 @@ module.exports = {
     extends: [
         'eslint:recommended',
     ],
+    parser: '@typescript-eslint/parser',
     parserOptions: {
         ecmaVersion: 2022,
         sourceType: 'module',
     },
+    plugins: [
+        '@typescript-eslint',
+    ],
     root: true,
     ignorePatterns: [
         'dist/**/*',
@@ -22,6 +26,7 @@ module.exports = {
         'no-console': 'off',
         'no-debugger': 'error',
         'eqeqeq': ['error', 'always'],
-        'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+        'no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     },
 };
