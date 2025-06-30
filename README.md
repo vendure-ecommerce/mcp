@@ -16,12 +16,12 @@ A standalone Model Context Protocol (MCP) server for Vendure CLI orchestration. 
 
 Install globally for easy access
 ```bash
-npm install -g vendure-mcp-server
+npm install -g @vendure/mcp-server
 ```
 
 Or install locally in your project
 ```bash
-npm install vendure-mcp-server
+npm install @vendure/mcp-server
 ```
 
 ### From Source
@@ -46,13 +46,13 @@ If you have installed the server from npm, you can use `npx` to run it without r
 Add the following to your MCP client's configuration file:
 
 
-If you have installed the package globally (`npm install -g vendure-mcp-server`), you can add it directly in your mcp.json:
+If you have installed the package globally (`npm install -g @vendure/mcp-server`), you can add it directly in your mcp.json:
 ```json
 {
   "mcpServers": {
     "vendure": {
       "command": "npx",
-      "args": ["vendure-mcp-server"]
+      "args": ["@vendure/mcp-server"]
     }
   }
 }
@@ -91,7 +91,7 @@ To connect your MCP client to the local development server, configure it to use 
     "vendure-dev": {
       "command": "npm",
       "args": ["run", "dev"],
-      "cwd": "/path/to/your/vendure-mcp-server/project"
+      "cwd": "/path/to/your/vendure-mcp/project"
     }
   }
 }
