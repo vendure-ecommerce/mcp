@@ -1,53 +1,52 @@
 # Vendure MCP Server
 
-A standalone Model Context Protocol (MCP) server for Vendure CLI orchestration. This independent package allows external clients to interact with Vendure CLI commands in a programmatic way, enabling automation and integration with various MCP clients like Claude Desktop, Cursor, and other tools.
+A standalone Model Context Protocol (MCP) server for Vendure CLI orchestration. This independent package allows external clients to interact with Vendure CLI commands in a programmatic way, enabling automation and integration with various MCP clients like Cursor.
 
-## 🚀 Features
+## Features
 
-- **🔧 CLI Integration**: Direct access to Vendure CLI `add` and `migrate` commands
-- **📊 Project Analysis**: Analyze project structure, list plugins, entities, services
-- **🔍 Environment Check**: Verify Vendure installation and dependencies
-- **🌐 Dual Transport**: Support for both STDIO and HTTP transport protocols
-- **⚡ Real-time**: Works with any Vendure project without modification
+- **CLI Integration**: Direct access to Vendure CLI `add` and `migrate` commands.
+- **Project Analysis**: Analyze project structure, list plugins, entities, and services.
+- **Environment Check**: Verify Vendure installation and dependencies.
+- **Dual Transport**: Support for both STDIO and HTTP transport protocols.
+- **Real-time**: Works with any Vendure project without modification.
 
-## 📦 Installation
+## Installation
 
 ### From npm (Recommended)
 
+Install globally for easy access
 ```bash
-# Install globally for easy access
 npm install -g vendure-mcp-server
+```
 
-# Or install locally in your project
+Or install locally in your project
+```bash
 npm install vendure-mcp-server
 ```
 
 ### From Source
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/vendure-mcp-server.git
+git clone https://github.com/vendure/vendure-mcp-server.git
 cd vendure-mcp-server
 npm install
 npm run build
 ```
 
-## 🎯 Usage
+## Usage and Configuration
 
-### Quick Start
+This guide provides instructions for both end-users (using the published npm package) and developers (working from the source code).
 
-```bash
-# Start STDIO server (for MCP clients)
-vendure-mcp
+### For End-Users (Published Package)
 
-# Start HTTP server (for web-based clients)
-vendure-mcp --transport http --port 8000
-```
+If you have installed the server from npm, you can use `npx` to run it without requiring a global installation.
 
-### MCP Client Configuration
+**MCP Client Configuration**
 
-#### Claude Desktop
-Add to your `claude_desktop_config.json`:
+Add the following to your MCP client's configuration file:
 
+
+If you have installed the package globally (`npm install -g vendure-mcp-server`), you can add it directly in your mcp.json:
 ```json
 {
   "mcpServers": {
@@ -58,131 +57,76 @@ Add to your `claude_desktop_config.json`:
   }
 }
 ```
+This command will automatically download and run the latest version of the server.
 
-#### Cursor (URL-based)
-Add to your `mcp.json`:
+**Starting the HTTP Server**
 
+If you have installed the package locally, you would have to run it on a server:
+```bash
+vendure-mcp --transport http --port 8000
+```
+
+Your mcp.json should then look like this:
 ```json
 {
   "mcpServers": {
     "vendure": {
-      "url": "http://localhost:8000/mcp"
+      "command": "http://localhost:8000"
     }
   }
 }
 ```
 
-Start the HTTP server:
+### For Developers (Local Source)
+
+When developing the server, you should run it directly from the source code to ensure you are using your latest changes.
+
+**MCP Client Configuration (Development)**
+
+To connect your MCP client to the local development server, configure it to use the `npm run dev` script. This provides live reloading for a smoother development experience.
+
+```json
+{
+  "mcpServers": {
+    "vendure-dev": {
+      "command": "npm",
+      "args": ["run", "dev"],
+      "cwd": "/path/to/your/vendure-mcp-server/project"
+    }
+  }
+}
+```
+> **Note:** Ensure the `cwd` (current working directory) points to the root of this project.
+
+**Starting the Dev Server Manually**
+
+You can also run the development server directly from your terminal:
 ```bash
-vendure-mcp --transport http --port 8000
+# Start STDIO dev server with live-reloading
+npm run dev
+
+# Start HTTP dev server with live-reloading
+npm run dev:http
 ```
 
-## 🛠️ Available Tools
+## Available Tools
 
-### 1. `vendure_add` - Add Features to Project
-Dynamically generated from Vendure CLI `add` command with support for:
-- **Plugins**: Create new Vendure plugins
-- **Entities**: Add custom entities with translatable/custom fields
-- **Services**: Add business logic services
-- **Job Queues**: Add background job processing
-- **API Extensions**: Add custom GraphQL operations
-- **UI Extensions**: Add Admin UI customizations
+### 1. `vendure_add`
+### 2. `vendure_migrate`
+### 3. `list_plugins`
+### 4. `analyze_project_structure`
+### 5. `check_vendure_installation`
 
-**Example:**
-```json
-{
-  "projectPath": "/path/to/vendure/project",
-  "plugin": "my-awesome-plugin"
-}
-```
+## Dynamic CLI Integration
+The server dynamically generates MCP tools from Vendure CLI command definitions. This ensures:
+- **Single Source of Truth**: CLI changes automatically reflect in MCP tools.
+- **Type Safety**: Full TypeScript integration with proper parameter validation.
+- **Future-proof**: New CLI commands and options become available automatically.
+- **No Hallucinations**: The code generated by the tools, specifically the cli tools will always be correct.
 
-### 2. `vendure_migrate` - Database Migration Operations
-Handle database schema changes and migrations.
-
-**Example:**
-```json
-{
-  "projectPath": "/path/to/vendure/project"
-}
-```
-
-### 3. `list_plugins` - Discover Project Plugins
-Analyze and list all plugins in your Vendure project.
-
-**Example:**
-```json
-{
-  "projectPath": "/path/to/vendure/project"
-}
-```
-
-### 4. `analyze_project_structure` - Full Project Analysis
-Get comprehensive overview of your project including entities, services, plugins, migrations.
-
-**Example:**
-```json
-{
-  "projectPath": "/path/to/vendure/project"
-}
-```
-
-### 5. `check_vendure_installation` - Environment Verification
-Verify Vendure CLI installation and check project dependencies.
-
-**Example:**
-```json
-{
-  "projectPath": "/path/to/vendure/project"
-}
-```
-
-## ⚙️ Configuration
-
-### Transport Modes
-
-#### STDIO (Default)
-For traditional MCP clients:
-```bash
-vendure-mcp
-# or
-vendure-mcp --transport stdio
-```
-
-#### HTTP
-For web-based clients and URL configuration:
-```bash
-vendure-mcp --transport http --port 8000 --host localhost
-```
-
-### Command Line Options
-
-```bash
-vendure-mcp [options]
-
-Options:
-  --transport <type>    Transport type: stdio (default) or http
-  --port <number>       HTTP port (default: 8000, only for http transport)
-  --host <string>       HTTP host (default: 127.0.0.1, only for http transport)
-```
-
-## 🏗️ Architecture
-
-### Dynamic CLI Integration
-The server dynamically generates MCP tools from Vendure CLI command definitions, ensuring:
-- **Single source of truth**: CLI changes automatically reflect in MCP tools
-- **Type safety**: Full TypeScript integration with proper parameter validation
-- **Future-proof**: New CLI commands become available automatically
-
-### Peer Dependencies
-Uses `@vendure/cli` as a peer dependency, allowing:
-- **Version flexibility**: Works with any compatible Vendure CLI version
-- **No duplication**: Leverages existing CLI installation in projects
-- **Clean separation**: Independent package without Vendure core dependency
-
-## 🔧 Development
+## Development
 
 ### Building from Source
-
 ```bash
 git clone <your-repo>
 cd vendure-mcp-server
@@ -191,62 +135,42 @@ npm run build
 ```
 
 ### Development Mode
-
+STDIO mode
 ```bash
-# STDIO mode
 npm run dev
+```
 
-# HTTP mode  
+HTTP mode
+```bash
 npm run dev:http
 ```
 
-### Publishing
+## License
 
-```bash
-npm run build
-npm publish
-```
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
-## 📋 Requirements
-
-- **Node.js**: >= 18.0.0
-- **Vendure CLI**: >= 3.0.0 (installed in target projects)
-- **MCP Client**: Any MCP-compatible client
-
-## 🎭 Error Handling
+##  Error Handling
 
 Comprehensive error handling includes:
-- ✅ Project path validation
-- ✅ Vendure CLI availability checks
-- ✅ Parameter validation with detailed messages
-- ✅ CLI execution error forwarding
-- ✅ File system operation safety
+- Project path validation
+- Vendure CLI availability checks
+- Parameter validation with detailed messages
+- CLI execution error forwarding
+- File system operation safety
 
-## 🔒 Security
+## Security
 
 - **Path validation**: Prevents directory traversal attacks
 - **Input sanitization**: All parameters validated against schemas
 - **Isolated execution**: Commands run in specified project directories only
 - **No elevated privileges**: Runs with standard user permissions
 
-## 🤝 Contributing
+## Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Follow our [contributing guide](https://github.com/vendure-ecommerce/vendure/blob/master/CONTRIBUTING.md) in our main repository.
 
-## 📄 License
+## Links
 
-MIT License - see LICENSE file for details.
-
-## 🔗 Links
-
+- [Vendure Core](https://github.com/vendure-ecommerce/vendure) 
 - [Vendure Documentation](https://www.vendure.io/docs/)
 - [MCP Specification](https://spec.modelcontextprotocol.io/)
-- [GitHub Repository](https://github.com/YOUR_USERNAME/vendure-mcp-server)
-
----
-
-Made with ❤️ for the Vendure community 
