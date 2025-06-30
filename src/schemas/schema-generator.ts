@@ -4,7 +4,7 @@ import type {
 } from '@vendure/cli/dist/shared/cli-command-definition.js';
 import { z } from 'zod';
 
-import { enhancedParameterDescriptions } from './enhanced-descriptions.js';
+import { enhancedParameterDescriptions } from '../constants/enhanced-descriptions.constants.js';
 
 /**
  * Utility function to convert CLI command options to Zod schema
@@ -16,30 +16,23 @@ export function createZodSchemaFromCliOptions(command: CliCommandDefinition): z.
 
     function processOptions(options: CliCommandOption[]) {
         for (const option of options) {
-            // Extract the parameter name from the long option (e.g., '--plugin <n>' -> 'plugin')
             const paramName = option.long
                 .replace(/^--/, '')
                 .replace(/ .*$/, '')
                 .replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
 
-            // Determine the type based on the option format
             let zodType: z.ZodTypeAny;
 
             if (option.long.includes('[') || option.long.includes('<')) {
-                // Parameter accepts a value
                 if (option.long.includes('[')) {
-                    // Optional value (e.g., '--api-extension [plugin]')
-                    zodType = z.union([z.string(), z.boolean()]).optional();
+                    zodType = z.string().optional();
                 } else {
-                    // Required value (e.g., '--plugin <n>')
                     zodType = z.string();
                 }
             } else {
-                // Boolean flag
                 zodType = z.boolean().optional();
             }
 
-            // Use enhanced description if available, otherwise fall back to CLI description
             const enhancedDesc = enhancedParameterDescriptions[command.name]?.[paramName];
             const description = enhancedDesc || option.description;
             zodType = zodType.describe(description);
@@ -50,7 +43,6 @@ export function createZodSchemaFromCliOptions(command: CliCommandDefinition): z.
 
             schemaFields[paramName] = zodType;
 
-            // Process sub-options recursively
             if (option.subOptions) {
                 processOptions(option.subOptions);
             }

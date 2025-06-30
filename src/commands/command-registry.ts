@@ -1,9 +1,8 @@
 import { cliCommands } from '@vendure/cli/dist/commands/command-declarations.js';
 import type { FastMCP } from 'fastmcp';
 
-import { baseSchema, helpSchema } from '../schemas/base-schemas.js';
-import { enhancedCommandDescriptions } from '../schemas/enhanced-descriptions.js';
-import { createZodSchemaFromCliOptions } from '../schemas/schema-generator.js';
+import { enhancedCommandDescriptions } from '../constants/enhanced-descriptions.constants.js';
+import { baseSchema, createZodSchemaFromCliOptions, helpSchema } from '../schemas/index.js';
 import { generateHelpContent } from '../tools/help-tool.js';
 import { analyzeProjectStructure, checkVendureInstallation, listPlugins } from '../tools/project-analyzer.js';
 import { executeMcpOperation } from '../utils/cli-executor.js';
@@ -12,13 +11,8 @@ import { executeMcpOperation } from '../utils/cli-executor.js';
  * Register all MCP tools with the FastMCP server
  */
 export function registerAllTools(server: FastMCP): void {
-    // Register dynamic CLI command tools
     registerCliCommandTools(server);
-
-    // Register utility tools
     registerUtilityTools(server);
-
-    // Register project analysis tools
     registerProjectAnalysisTools(server);
 }
 
@@ -28,8 +22,6 @@ export function registerAllTools(server: FastMCP): void {
 function registerCliCommandTools(server: FastMCP): void {
     for (const command of cliCommands) {
         const schema = createZodSchemaFromCliOptions(command);
-
-        // Use enhanced description if available, otherwise fall back to CLI description
         const description = enhancedCommandDescriptions[command.name] || command.description;
 
         server.addTool({
@@ -47,18 +39,16 @@ function registerCliCommandTools(server: FastMCP): void {
  * Register utility tools (list commands, help)
  */
 function registerUtilityTools(server: FastMCP): void {
-    // List available commands
     server.addTool({
         name: 'list_commands',
         description: 'List all available Vendure CLI commands accessible via MCP',
         parameters: baseSchema,
         execute: async args => {
-            const commandsList = cliCommands.map(cmd => `• ${cmd.name}: ${cmd.description}`).join('\n');
+            const commandsList = cliCommands.map(cmd => `- ${cmd.name}: ${cmd.description}`).join('\n');
             return `Available Vendure CLI commands via MCP:\n\n${commandsList}\n\nProject path: ${args.projectPath}`;
         },
     });
 
-    // Help tool for vendure_add command
     server.addTool({
         name: 'vendure_add_help',
         description:
@@ -74,7 +64,6 @@ function registerUtilityTools(server: FastMCP): void {
  * Register project analysis tools
  */
 function registerProjectAnalysisTools(server: FastMCP): void {
-    // List plugins
     server.addTool({
         name: 'list_plugins',
         description: 'List all plugins in the Vendure project by analyzing the project structure',
@@ -84,7 +73,6 @@ function registerProjectAnalysisTools(server: FastMCP): void {
         },
     });
 
-    // Analyze project structure
     server.addTool({
         name: 'analyze_project_structure',
         description:
@@ -95,7 +83,6 @@ function registerProjectAnalysisTools(server: FastMCP): void {
         },
     });
 
-    // Check Vendure installation
     server.addTool({
         name: 'check_vendure_installation',
         description:

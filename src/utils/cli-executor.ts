@@ -72,19 +72,17 @@ export async function executeMcpOperation(commandName: string, args: Record<stri
 
     try {
         if (commandName === 'add') {
-            // Use the CLI's performAddOperation function directly for better integration
             const result = await performAddOperation(options as AddOperationOptions);
 
             if (result.success) {
-                return `✅ ${result.message}`;
+                return result.message;
             } else {
                 throw new Error(result.message);
             }
         } else {
-            // For other commands, fall back to spawning the CLI
             const cliArgs = [commandName, ...formatOptionsForCli(options)];
             const result = await executeVendureCommand(cliArgs, projectPath);
-            return `✅ ${commandName} operation completed successfully.\n\nOutput:\n${result}`;
+            return `${commandName} operation completed successfully.\n\nOutput:\n${result}`;
         }
     } catch (error) {
         throw new Error(
@@ -102,7 +100,6 @@ export function formatOptionsForCli(options: Record<string, any>): string[] {
     for (const [key, value] of Object.entries(options)) {
         if (value === undefined || value === false) continue;
 
-        // Convert camelCase back to kebab-case
         const kebabKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
         const flag = `--${kebabKey}`;
 

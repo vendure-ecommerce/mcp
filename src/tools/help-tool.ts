@@ -4,7 +4,7 @@
 
 export const helpGuides: Record<string, string> = {
     'api-extension': `
-📋 API EXTENSION GUIDE:
+API EXTENSION GUIDE:
 
 Required Parameters:
 - projectPath: "/path/to/vendure/project"
@@ -20,10 +20,10 @@ Example:
   "selectedService": "ProductService"
 }
 
-💡 TIP: Use list_plugins tool first to see available plugins and services.`,
+TIP: Use list_plugins tool first to see available plugins and services.`,
 
     entity: `
-📋 ENTITY GUIDE:
+ENTITY GUIDE:
 
 Required Parameters:
 - projectPath: "/path/to/vendure/project"
@@ -43,7 +43,7 @@ Example:
 }`,
 
     service: `
-📋 SERVICE GUIDE:
+SERVICE GUIDE:
 
 Required Parameters:
 - projectPath: "/path/to/vendure/project"
@@ -64,7 +64,7 @@ Example:
 }`,
 
     plugin: `
-📋 PLUGIN GUIDE:
+PLUGIN GUIDE:
 
 Required Parameters:
 - projectPath: "/path/to/vendure/project" 
@@ -103,19 +103,19 @@ export function generateHelpContent(operation?: string): string {
     }
 
     return `
-🔧 VENDURE ADD TOOL COMPLETE GUIDE:
+VENDURE ADD TOOL COMPLETE GUIDE:
 
 ${Object.entries(helpGuides)
     .map(([_op, guide]) => guide)
     .join('\n\n')}
 
-⚠️  COMMON MISTAKES TO AVOID:
+COMMON MISTAKES TO AVOID:
 1. Using non-existent plugin names (use list_plugins first)
 2. Missing required parameter combinations
 3. Wrong casing (use PascalCase for class names, kebab-case for plugin names)
 4. For API extensions: forgetting selectedService or query/mutation names
 
-🔍 DISCOVERY TOOLS:
+DISCOVERY TOOLS:
 - list_plugins: See all available plugins and their services
 - vendure_add_help: Get specific guidance for operations
 `;
