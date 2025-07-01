@@ -19,7 +19,7 @@ function generateParameterDocumentation(options: CliCommandOption[], level = 0):
             const isRequired = option.required || option.description.includes('required with');
             const requiredIndicator = isRequired ? ' (REQUIRED)' : '';
 
-            let doc = `${indent}- ${paramName}${requiredIndicator}: ${option.description}`;
+            let doc = `${indent}- ${paramName}${requiredIndicator}`;
 
             if (option.subOptions?.length) {
                 doc += '\n' + generateParameterDocumentation(option.subOptions, level + 1);
