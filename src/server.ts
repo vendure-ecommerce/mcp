@@ -3,36 +3,35 @@
 import { FastMCP } from 'fastmcp';
 
 import { registerAllTools } from './commands/command-registry.js';
+import { initializeProjectContext, validateProjectPath } from './project-context.js';
 import { parseArgs } from './utils/server-args.js';
 
-const server = new FastMCP({
-    name: 'Vendure CLI Orchestrator',
-    version: '1.0.0',
-});
+async function main() {
+    const { projectPath } = parseArgs();
 
-registerAllTools(server);
-
-/**
- * Start the MCP server with the specified transport
- */
-function startServer(): void {
-    const { transport, port, host } = parseArgs();
-
-    if (transport === 'http' || transport === 'httpStream') {
-        console.log(`Starting Vendure CLI MCP Server (HTTP) on http://${host}:${port}/mcp`);
-        void server.start({
-            transportType: 'httpStream',
-            httpStream: {
-                endpoint: '/mcp',
-                port,
-            },
-        });
-    } else {
-        console.log('Starting Vendure CLI MCP Server (STDIO)...');
-        void server.start({
-            transportType: 'stdio',
-        });
+    try {
+        await validateProjectPath(projectPath);
+    } catch (error) {
+        console.error(`Error: ${(error as Error).message}`);
+        process.exit(1);
     }
+
+    initializeProjectContext(projectPath);
+
+    const server = new FastMCP({
+        name: 'Vendure CLI Orchestrator',
+        version: '1.0.0',
+    });
+
+    registerAllTools(server);
+
+    console.log(`Starting Vendure CLI MCP Server (STDIO) for project: ${projectPath}`);
+    void server.start({
+        transportType: 'stdio',
+    });
 }
 
-startServer();
+main().catch(err => {
+    console.error(`Fatal error: ${err instanceof Error ? err.message : String(err)}`);
+    process.exit(1);
+});

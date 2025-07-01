@@ -5,36 +5,28 @@ import fs from 'fs';
 import path from 'path';
 
 /**
- * Execute a Vendure CLI command by spawning the process
+ * Execute a Vendure CLI command by spawning the process in the project directory.
  */
 export async function executeVendureCommand(args: string[], projectPath: string): Promise<string> {
     return new Promise((resolve, reject) => {
-        // Ensure we have an absolute path for the project
-        const absoluteProjectPath = path.isAbsolute(projectPath)
-            ? projectPath
-            : path.resolve(process.cwd(), projectPath);
+        const vendureBin = path.join(projectPath, 'node_modules', '.bin', 'vendure');
 
-        // Find the vendure CLI executable in the project's node_modules
-        const vendureBin = path.join(absoluteProjectPath, 'node_modules', '.bin', 'vendure');
-
-        // Check if the project directory exists
-        if (!fs.existsSync(absoluteProjectPath)) {
-            reject(new Error(`Project directory does not exist: ${absoluteProjectPath}`));
+        if (!fs.existsSync(projectPath)) {
+            reject(new Error(`Project directory does not exist: ${projectPath}`));
             return;
         }
 
-        // Check if the Vendure CLI exists
         if (!fs.existsSync(vendureBin)) {
             reject(
                 new Error(
-                    `Vendure CLI not found at: ${vendureBin}. Make sure the Vendure CLI is installed in the project (npm install @vendure/cli).`,
+                    `Vendure CLI not found at: ${vendureBin}. Make sure @vendure/cli is installed in the project.`,
                 ),
             );
             return;
         }
 
         const child = spawn(vendureBin, args, {
-            cwd: absoluteProjectPath,
+            cwd: projectPath,
             stdio: ['pipe', 'pipe', 'pipe'],
             env: { ...process.env },
         });
@@ -54,7 +46,7 @@ export async function executeVendureCommand(args: string[], projectPath: string)
             if (code === 0) {
                 resolve(stdout);
             } else {
-                reject(new Error(stderr || stdout));
+                reject(new Error(stderr || stdout || `Command exited with code ${code}`));
             }
         });
 
@@ -65,14 +57,16 @@ export async function executeVendureCommand(args: string[], projectPath: string)
 }
 
 /**
- * Execute CLI operations through the MCP interface
+ * Execute CLI operations through the MCP interface within the project context.
  */
-export async function executeMcpOperation(commandName: string, args: Record<string, any>): Promise<string> {
-    const { projectPath, ...options } = args;
-
+export async function executeMcpOperation(
+    commandName: string,
+    options: Record<string, any>,
+    projectPath: string,
+): Promise<string> {
     try {
         if (commandName === 'add') {
-            const result = await performAddOperation(options as AddOperationOptions);
+            const result = await performAddOperation({ ...options, projectPath } as AddOperationOptions);
 
             if (result.success) {
                 return result.message;

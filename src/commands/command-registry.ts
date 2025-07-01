@@ -2,6 +2,7 @@ import { cliCommands } from '@vendure/cli/dist/commands/command-declarations.js'
 import type { FastMCP } from 'fastmcp';
 
 import { enhancedCommandDescriptions } from '../constants/enhanced-descriptions.constants.js';
+import { getProjectContext } from '../project-context.js';
 import { baseSchema, createZodSchemaFromCliOptions, helpSchema } from '../schemas/index.js';
 import { generateHelpContent } from '../tools/help-tool.js';
 import { analyzeProjectStructure, checkVendureInstallation, listPlugins } from '../tools/project-analyzer.js';
@@ -29,7 +30,8 @@ function registerCliCommandTools(server: FastMCP): void {
             description: description,
             parameters: schema,
             execute: async args => {
-                return await executeMcpOperation(command.name, args);
+                const { projectPath } = getProjectContext();
+                return await executeMcpOperation(command.name, args, projectPath);
             },
         });
     }
@@ -43,9 +45,10 @@ function registerUtilityTools(server: FastMCP): void {
         name: 'list_commands',
         description: 'List all available Vendure CLI commands accessible via MCP',
         parameters: baseSchema,
-        execute: async args => {
+        execute: async () => {
+            const { projectPath } = getProjectContext();
             const commandsList = cliCommands.map(cmd => `- ${cmd.name}: ${cmd.description}`).join('\n');
-            return `Available Vendure CLI commands via MCP:\n\n${commandsList}\n\nProject path: ${args.projectPath}`;
+            return `Available Vendure CLI commands via MCP:\n\n${commandsList}\n\nProject path: ${projectPath}`;
         },
     });
 
@@ -64,12 +67,13 @@ function registerUtilityTools(server: FastMCP): void {
  * Register project analysis tools
  */
 function registerProjectAnalysisTools(server: FastMCP): void {
+    const { projectPath } = getProjectContext();
     server.addTool({
         name: 'list_plugins',
         description: 'List all plugins in the Vendure project by analyzing the project structure',
         parameters: baseSchema,
-        execute: async args => {
-            return listPlugins(args.projectPath);
+        execute: async () => {
+            return listPlugins(projectPath);
         },
     });
 
@@ -78,8 +82,8 @@ function registerProjectAnalysisTools(server: FastMCP): void {
         description:
             'Analyze the overall structure of a Vendure project including entities, services, and configuration',
         parameters: baseSchema,
-        execute: async args => {
-            return analyzeProjectStructure(args.projectPath);
+        execute: async () => {
+            return analyzeProjectStructure(projectPath);
         },
     });
 
@@ -88,8 +92,8 @@ function registerProjectAnalysisTools(server: FastMCP): void {
         description:
             'Check if Vendure CLI is properly installed and what version is available in the project',
         parameters: baseSchema,
-        execute: async args => {
-            return checkVendureInstallation(args.projectPath);
+        execute: async () => {
+            return checkVendureInstallation(projectPath);
         },
     });
 }

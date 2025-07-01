@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "vendure-local-project": {
+      "command": "npx",
+      "args": ["vendure-mcp"],
+      "cwd": "/path/to/your/vendure-project"
+    }
+  }
+} 

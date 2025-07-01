@@ -2,20 +2,33 @@
  * Command line argument parsing utilities
  */
 
+import path from 'path';
+
+/**
+ * Defines the arguments for starting the server.
+ */
 export interface ServerArgs {
-    transport: string;
-    port: number;
-    host: string;
+    /**
+     * The absolute path to the Vendure project directory.
+     */
+    projectPath: string;
 }
 
 /**
- * Parse command line arguments to determine transport configuration
+ * Parses command-line arguments to configure the server.
+ * The server now operates in the context of a single project.
+ * @returns The parsed server arguments.
  */
 export function parseArgs(): ServerArgs {
-    const args = process.argv.slice(2);
-    const transport = args.includes('--transport') ? args[args.indexOf('--transport') + 1] : 'stdio';
-    const port = args.includes('--port') ? parseInt(args[args.indexOf('--port') + 1], 10) : 8000;
-    const host = args.includes('--host') ? args[args.indexOf('--host') + 1] : '127.0.0.1';
+    const rawArgs = process.argv.slice(2);
+    let projectPath = process.cwd(); // Default to the current working directory
 
-    return { transport, port, host };
+    const projectPathIndex = rawArgs.indexOf('--projectPath');
+    if (projectPathIndex !== -1 && projectPathIndex + 1 < rawArgs.length) {
+        projectPath = rawArgs[projectPathIndex + 1];
+    }
+
+    return {
+        projectPath: path.resolve(projectPath),
+    };
 }

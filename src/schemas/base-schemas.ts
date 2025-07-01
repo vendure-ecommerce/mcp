@@ -1,11 +1,10 @@
 import { z } from 'zod';
 
 /**
- * Base schema for operations requiring a project path
+ * Base schema for operations.
+ * Project path is now determined at server startup, so it's not needed here.
  */
-export const baseSchema = z.object({
-    projectPath: z.string().describe('Path to the Vendure project directory (required)'),
-});
+export const baseSchema = z.object({});
 
 /**
  * Schema for the help tool
