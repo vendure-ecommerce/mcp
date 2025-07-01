@@ -1,12 +1,16 @@
-import { cliCommands } from '@vendure/cli/dist/commands/command-declarations.js';
 import type { FastMCP } from 'fastmcp';
 
 import { enhancedCommandDescriptions } from '../constants/enhanced-descriptions.constants.js';
 import { getProjectContext } from '../project-context.js';
-import { baseSchema, createZodSchemaFromCliOptions, helpSchema } from '../schemas/index.js';
+import { baseSchema, helpSchema } from '../schemas/index.js';
 import { generateHelpContent } from '../tools/help-tool.js';
 import { analyzeProjectStructure, checkVendureInstallation, listPlugins } from '../tools/project-analyzer.js';
 import { executeMcpOperation } from '../utils/cli-executor.js';
+
+const cliCommands = [
+    { name: 'add', description: 'Add features to your Vendure project' },
+    { name: 'migrate', description: 'Run database migrations' },
+];
 
 export function registerAllTools(server: FastMCP): void {
     registerCliCommandTools(server);
@@ -16,13 +20,12 @@ export function registerAllTools(server: FastMCP): void {
 
 function registerCliCommandTools(server: FastMCP): void {
     for (const command of cliCommands) {
-        const schema = createZodSchemaFromCliOptions(command);
         const description = enhancedCommandDescriptions[command.name] || command.description;
 
         server.addTool({
             name: `vendure_${command.name}`,
             description: description,
-            parameters: schema,
+            parameters: baseSchema,
             execute: async args => {
                 const { projectPath } = getProjectContext();
                 return await executeMcpOperation(command.name, args, projectPath);

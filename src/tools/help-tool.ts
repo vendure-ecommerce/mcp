@@ -3,14 +3,12 @@ export const helpGuides: Record<string, string> = {
 API EXTENSION GUIDE:
 
 Required Parameters:
-- projectPath: "/path/to/vendure/project"
 - apiExtension: "plugin-name" (must be existing plugin)
 - selectedService: "ServiceName" (must be existing service in the plugin)
 - queryName: "customQueryName" OR mutationName: "customMutationName" (at least one required)
 
 Example:
 {
-  "projectPath": "/path/to/project",
   "apiExtension": "my-plugin",
   "queryName": "getCustomProducts", 
   "selectedService": "ProductService"
@@ -22,7 +20,6 @@ TIP: Use list_plugins tool first to see available plugins and services.`,
 ENTITY GUIDE:
 
 Required Parameters:
-- projectPath: "/path/to/vendure/project"
 - entity: "EntityClassName" (PascalCase)
 - selectedPlugin: "plugin-name" (must be existing plugin)
 
@@ -32,7 +29,6 @@ Optional Parameters:
 
 Example:
 {
-  "projectPath": "/path/to/project",
   "entity": "CustomProduct",
   "selectedPlugin": "my-plugin",
   "customFields": true
@@ -42,7 +38,6 @@ Example:
 SERVICE GUIDE:
 
 Required Parameters:
-- projectPath: "/path/to/vendure/project"
 - service: "ServiceClassName" (PascalCase)
 - selectedPlugin: "plugin-name" (must be existing plugin)
 
@@ -52,7 +47,6 @@ Optional Parameters:
 
 Example:
 {
-  "projectPath": "/path/to/project",
   "service": "CustomProductService",
   "selectedPlugin": "my-plugin",
   "type": "entity",
@@ -63,12 +57,10 @@ Example:
 PLUGIN GUIDE:
 
 Required Parameters:
-- projectPath: "/path/to/vendure/project" 
 - plugin: "PluginName" (PascalCase)
 
 Example:
 {
-  "projectPath": "/path/to/project",
   "plugin": "MyAwesomePlugin"
 }`,
 
@@ -76,14 +68,12 @@ Example:
 📋 JOB QUEUE GUIDE:
 
 Required Parameters:
-- projectPath: "/path/to/vendure/project"
 - jobQueue: "plugin-name" (must be existing plugin)
 - name: "queue-name" (kebab-case recommended)
 - selectedService: "ServiceName" (must be existing service)
 
 Example:
 {
-  "projectPath": "/path/to/project",
   "jobQueue": "my-plugin",
   "name": "email-sending-queue",
   "selectedService": "EmailService"
@@ -111,5 +101,7 @@ COMMON MISTAKES TO AVOID:
 DISCOVERY TOOLS:
 - list_plugins: See all available plugins and their services
 - vendure_add_help: Get specific guidance for operations
+
+NOTE: Project path is automatically determined from server context - no need to specify it!
 `;
 }
