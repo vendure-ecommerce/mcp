@@ -55,6 +55,7 @@ coverage/
 
 # Test and debugging
 .nyc_output/
+*.tgz
 
 # Package manager locks and caches
 .npm/
