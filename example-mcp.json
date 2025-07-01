@@ -2,8 +2,13 @@
   "mcpServers": {
     "vendure-local-project": {
       "command": "npx",
-      "args": ["vendure-mcp"],
-      "cwd": "/path/to/your/vendure-project"
+      "args": [
+        "--package",
+        "@vendure/mcp-server",
+        "vendure-mcp",
+        "--projectPath",
+        "/path/to/your/vendure-project"
+      ]
     }
   }
 } 
