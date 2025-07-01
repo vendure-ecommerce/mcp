@@ -7,7 +7,7 @@ import { initializeProjectContext, validateProjectPath } from './project-context
 import { parseArgs } from './utils/server-args.js';
 
 async function main() {
-    const { projectPath } = parseArgs();
+    const { projectPath, transport, port, host } = parseArgs();
 
     try {
         await validateProjectPath(projectPath);
@@ -25,10 +25,22 @@ async function main() {
 
     registerAllTools(server);
 
-    console.log(`Starting Vendure CLI MCP Server (STDIO) for project: ${projectPath}`);
-    void server.start({
-        transportType: 'stdio',
-    });
+    if (transport === 'http') {
+        console.log(`Starting Vendure CLI MCP Server (HTTP) on http://${host}:${port}/mcp`);
+        console.log(`Project context: ${projectPath}`);
+        void server.start({
+            transportType: 'httpStream',
+            httpStream: {
+                endpoint: '/mcp',
+                port,
+            },
+        });
+    } else {
+        console.log(`Starting Vendure CLI MCP Server (STDIO) for project: ${projectPath}`);
+        void server.start({
+            transportType: 'stdio',
+        });
+    }
 }
 
 main().catch(err => {
