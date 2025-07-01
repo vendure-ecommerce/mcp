@@ -1,7 +1,3 @@
-/**
- * Enhanced descriptions for CLI parameters to improve AI agent understanding
- */
-
 export const enhancedParameterDescriptions: Record<string, Record<string, string>> = {
     add: {
         plugin: 'Create a new plugin with the specified name. Example: "MyNewPlugin"',
@@ -34,9 +30,6 @@ export const enhancedParameterDescriptions: Record<string, Record<string, string
     },
 };
 
-/**
- * Enhanced command descriptions for better AI agent understanding
- */
 export const enhancedCommandDescriptions: Record<string, string> = {
     add: `Add features to your Vendure project. 
 

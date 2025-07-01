@@ -1,9 +1,6 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 
-/**
- * Holds the context for the current Vendure project.
- */
 export interface ProjectContext {
     projectPath: string;
 }
@@ -11,7 +8,7 @@ export interface ProjectContext {
 let projectContext: ProjectContext | undefined;
 
 /**
- * Initializes the project context. This should be called once at startup.
+ * Initializes the project context. Must be called once at startup.
  * @param projectPath The absolute path to the Vendure project.
  */
 export function initializeProjectContext(projectPath: string): void {
@@ -21,10 +18,6 @@ export function initializeProjectContext(projectPath: string): void {
     projectContext = { projectPath };
 }
 
-/**
- * Retrieves the initialized project context.
- * @returns The project context.
- */
 export function getProjectContext(): ProjectContext {
     if (!projectContext) {
         throw new Error('Project context has not been initialized. Call initializeProjectContext first.');
@@ -33,8 +26,7 @@ export function getProjectContext(): ProjectContext {
 }
 
 /**
- * Validates that the given path points to a valid Vendure project
- * by checking for the presence of `@vendure/core` in package.json.
+ * Validates that the path points to a valid Vendure project.
  * @param projectPath The path to validate.
  */
 export async function validateProjectPath(projectPath: string): Promise<void> {

@@ -8,18 +8,12 @@ import { generateHelpContent } from '../tools/help-tool.js';
 import { analyzeProjectStructure, checkVendureInstallation, listPlugins } from '../tools/project-analyzer.js';
 import { executeMcpOperation } from '../utils/cli-executor.js';
 
-/**
- * Register all MCP tools with the FastMCP server
- */
 export function registerAllTools(server: FastMCP): void {
     registerCliCommandTools(server);
     registerUtilityTools(server);
     registerProjectAnalysisTools(server);
 }
 
-/**
- * Register tools based on CLI command definitions
- */
 function registerCliCommandTools(server: FastMCP): void {
     for (const command of cliCommands) {
         const schema = createZodSchemaFromCliOptions(command);
@@ -37,9 +31,6 @@ function registerCliCommandTools(server: FastMCP): void {
     }
 }
 
-/**
- * Register utility tools (list commands, help)
- */
 function registerUtilityTools(server: FastMCP): void {
     server.addTool({
         name: 'list_commands',
@@ -63,9 +54,6 @@ function registerUtilityTools(server: FastMCP): void {
     });
 }
 
-/**
- * Register project analysis tools
- */
 function registerProjectAnalysisTools(server: FastMCP): void {
     const { projectPath } = getProjectContext();
     server.addTool({

@@ -1,23 +1,18 @@
 import fs from 'fs';
 import path from 'path';
 
-/**
- * List all plugins in the Vendure project by analyzing the project structure
- */
 export function listPlugins(projectPath: string): string {
     try {
         const absoluteProjectPath = path.isAbsolute(projectPath)
             ? projectPath
             : path.resolve(process.cwd(), projectPath);
 
-        // Check if project directory exists
         if (!fs.existsSync(absoluteProjectPath)) {
             throw new Error(`Project directory does not exist: ${absoluteProjectPath}`);
         }
 
         const plugins: string[] = [];
 
-        // Look for plugins in common locations
         const possiblePluginDirs = [
             path.join(absoluteProjectPath, 'src', 'plugins'),
             path.join(absoluteProjectPath, 'plugins'),
@@ -29,7 +24,6 @@ export function listPlugins(projectPath: string): string {
                 const items = fs.readdirSync(pluginDir, { withFileTypes: true });
                 for (const item of items) {
                     if (item.isDirectory()) {
-                        // Look for plugin files
                         const pluginFiles = fs
                             .readdirSync(path.join(pluginDir, item.name))
                             .filter(file => file.endsWith('.plugin.ts') || file.endsWith('.plugin.js'));
@@ -41,7 +35,6 @@ export function listPlugins(projectPath: string): string {
             }
         }
 
-        // Also check for plugins referenced in main config
         const configPaths = [
             path.join(absoluteProjectPath, 'src', 'vendure-config.ts'),
             path.join(absoluteProjectPath, 'vendure-config.ts'),
@@ -52,7 +45,6 @@ export function listPlugins(projectPath: string): string {
         for (const configPath of configPaths) {
             if (fs.existsSync(configPath)) {
                 const content = fs.readFileSync(configPath, 'utf8');
-                // Look for plugin imports (basic regex matching)
                 const pluginImports = content.match(/import.*Plugin.*from.*['"](.*)['"]/g) || [];
                 importedPlugins.push(...pluginImports.map(imp => imp.trim()));
                 break;
@@ -84,9 +76,6 @@ export function listPlugins(projectPath: string): string {
     }
 }
 
-/**
- * Analyze the overall structure of a Vendure project including entities, services, and configuration
- */
 export function analyzeProjectStructure(projectPath: string): string {
     try {
         const absoluteProjectPath = path.isAbsolute(projectPath)
@@ -105,7 +94,6 @@ export function analyzeProjectStructure(projectPath: string): string {
             configFiles: [] as string[],
         };
 
-        // Analyze src directory structure
         const srcDir = path.join(absoluteProjectPath, 'src');
         if (fs.existsSync(srcDir)) {
             const analyzeDirectory = (dir: string, category: keyof typeof analysis, pattern: RegExp) => {
@@ -125,7 +113,6 @@ export function analyzeProjectStructure(projectPath: string): string {
             analyzeDirectory(srcDir, 'plugins', /\.plugin\.(ts|js)$/);
         }
 
-        // Check for migrations
         const migrationDirs = [
             path.join(absoluteProjectPath, 'migrations'),
             path.join(absoluteProjectPath, 'src', 'migrations'),
@@ -140,7 +127,6 @@ export function analyzeProjectStructure(projectPath: string): string {
             }
         }
 
-        // Check for config files
         const configFiles = [
             'vendure-config.ts',
             'vendure-config.js',
@@ -203,9 +189,6 @@ export function analyzeProjectStructure(projectPath: string): string {
     }
 }
 
-/**
- * Check if Vendure CLI is properly installed and what version is available in the project
- */
 export function checkVendureInstallation(projectPath: string): string {
     try {
         const absoluteProjectPath = path.isAbsolute(projectPath)
@@ -221,7 +204,6 @@ export function checkVendureInstallation(projectPath: string): string {
 
         let result = `🔍 Vendure Installation Check: ${path.basename(absoluteProjectPath)}\n\n`;
 
-        // Check if CLI binary exists
         if (fs.existsSync(vendureBin)) {
             result += '✅ Vendure CLI binary found\n';
             result += `📍 Location: ${vendureBin}\n`;
@@ -230,7 +212,6 @@ export function checkVendureInstallation(projectPath: string): string {
             result += '💡 Install with: npm install @vendure/cli\n';
         }
 
-        // Check package.json for Vendure dependencies
         if (fs.existsSync(packageJsonPath)) {
             const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
             const allDeps = {
@@ -253,7 +234,6 @@ export function checkVendureInstallation(projectPath: string): string {
                 result += '\n❌ No Vendure dependencies found in package.json\n';
             }
 
-            // Check Node.js and TypeScript versions
             result += '\n🔧 Environment:\n';
             if (allDeps.typescript) {
                 const tsVersion = String(allDeps.typescript);

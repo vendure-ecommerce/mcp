@@ -4,9 +4,6 @@ import { spawn } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
-/**
- * Execute a Vendure CLI command by spawning the process in the project directory.
- */
 export async function executeVendureCommand(args: string[], projectPath: string): Promise<string> {
     return new Promise((resolve, reject) => {
         const vendureBin = path.join(projectPath, 'node_modules', '.bin', 'vendure');
@@ -56,9 +53,6 @@ export async function executeVendureCommand(args: string[], projectPath: string)
     });
 }
 
-/**
- * Execute CLI operations through the MCP interface within the project context.
- */
 export async function executeMcpOperation(
     commandName: string,
     options: Record<string, any>,
@@ -85,9 +79,6 @@ export async function executeMcpOperation(
     }
 }
 
-/**
- * Helper function to format MCP options to CLI arguments
- */
 export function formatOptionsForCli(options: Record<string, any>): string[] {
     const args: string[] = [];
 

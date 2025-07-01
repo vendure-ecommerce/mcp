@@ -6,9 +6,6 @@ import { z } from 'zod';
 
 import { enhancedParameterDescriptions } from '../constants/enhanced-descriptions.constants.js';
 
-/**
- * Utility function to convert CLI command options to Zod schema
- */
 export function createZodSchemaFromCliOptions(command: CliCommandDefinition): z.ZodObject<any> {
     const schemaFields: Record<string, z.ZodTypeAny> = {
         projectPath: z.string().describe('Path to the Vendure project directory (required)'),

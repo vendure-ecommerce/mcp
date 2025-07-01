@@ -1,7 +1,3 @@
-/**
- * Help guide content for the vendure_add_help tool
- */
-
 export const helpGuides: Record<string, string> = {
     'api-extension': `
 API EXTENSION GUIDE:
@@ -94,9 +90,6 @@ Example:
 }`,
 };
 
-/**
- * Generate help content based on the requested operation
- */
 export function generateHelpContent(operation?: string): string {
     if (operation && operation !== 'all') {
         return helpGuides[operation] || `No guide available for operation: ${operation}`;
