@@ -19,8 +19,8 @@ The server is designed to be installed and run directly from your Vendure projec
 
 Navigate to your Vendure project's root directory and install the server as a development dependency:
 
+In your Vendure project's root directory
 ```bash
-# In your Vendure project's root directory
 npm install @vendure/mcp-server --save-dev
 ```
 
@@ -56,12 +56,11 @@ This is the simplest and most direct way to connect.
 
 If your client does not support STDIO or you need to connect over a network, you can run the server in HTTP mode.
 
-First, start the server from your terminal:
+First, start the server from your terminal in your Vendure project's root directory:
 ```bash
-# In your Vendure project's root directory
 npx vendure-mcp --transport http --projectPath .
 ```
-This will start the server on the default port (8000).
+This will start the server on the default port (8000), you can explicitly define the port by using the `--port <0000>` flag.
 
 Then, configure your `mcp.json` to connect to the running server's URL:
 ```json
@@ -100,22 +99,6 @@ To connect an MCP client to your local development server, use the `npm run dev`
 - **HTTP Mode**: `npm run dev:http -- --projectPath /path/to/your/test-vendure-project`
 
 Configure your `mcp.json` as described in the setup section to connect to your development server. The `--` is required to pass arguments to the npm script correctly.
-
-## Error Handling
-
-Comprehensive error handling includes:
--   Project path validation.
--   Vendure CLI availability checks.
--   Parameter validation with detailed messages.
--   CLI execution error forwarding.
--   File system operation safety.
-
-## Security
-
--   **Path validation**: Prevents directory traversal attacks.
--   **Input sanitization**: All parameters validated against schemas.
--   **Isolated execution**: Commands run in the specified project directory only.
--   **No elevated privileges**: Runs with standard user permissions.
 
 ## Links
 
