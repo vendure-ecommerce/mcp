@@ -1,33 +1,39 @@
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { cliCommands } from '@vendure/cli/dist/commands/command-declarations.js';
-import type { FastMCP } from 'fastmcp';
+import { z } from 'zod';
 
 import { getProjectContext } from '../project-context.js';
-import { analysisSchema } from '../schemas/index.js';
 import { commandSchemas } from '../schemas/schema-generator.js';
 import { executeMcpOperation } from '../utils/cli-executor.js';
 import { convertToParameterName } from '../utils/command-parser.js';
 
 import { analysisTasks } from './analysis-tasks-declarations.js';
 
-export function registerAllTools(server: FastMCP): void {
+export function registerAllTools(server: McpServer): void {
     registerCliCommandTools(server);
     registerAnalysisTool(server);
 }
 
-function registerCliCommandTools(server: FastMCP): void {
+function registerCliCommandTools(server: McpServer): void {
     for (const command of cliCommands) {
         const commandSchema = commandSchemas[command.name];
 
         // Register main command
-        server.addTool({
-            name: `vendure_${command.name}`,
-            description: command.description,
-            ...(command.options && command.options.length > 0 && { parameters: commandSchema.mainCommand }),
-            execute: async args => {
-                const { projectPath } = getProjectContext();
-                return executeMcpOperation(command.name, args, projectPath);
+        server.registerTool(
+            `vendure_${command.name}`,
+            {
+                description: command.description,
+                ...(command.options &&
+                    command.options.length > 0 && { inputSchema: commandSchema.mainCommand.shape }),
             },
-        });
+            async (args: Record<string, any>) => {
+                const { projectPath } = getProjectContext();
+                const result = await executeMcpOperation(command.name, args, projectPath);
+                return {
+                    content: [{ type: 'text' as const, text: result }],
+                };
+            },
+        );
 
         // Register sub-commands
         if (commandSchema.subCommands) {
@@ -37,33 +43,54 @@ function registerCliCommandTools(server: FastMCP): void {
                     o => convertToParameterName(o.long) === subCommandName,
                 );
 
-                server.addTool({
-                    name: `vendure_${command.name}_${subCommandName}`,
-                    description: `${subCommandOption?.description} (used in "vendure ${command.name}")`,
-                    parameters: subCommandSchema,
-                    execute: async args => {
-                        const { projectPath } = getProjectContext();
-                        const transformedArgs = { [subCommandName]: args.name, ...args };
-                        return executeMcpOperation(command.name, transformedArgs, projectPath);
+                server.registerTool(
+                    `vendure_${command.name}_${subCommandName}`,
+                    {
+                        description: `${subCommandOption?.description} (used in "vendure ${command.name}")`,
+                        inputSchema: subCommandSchema.shape,
                     },
-                });
+                    async (args: Record<string, any>) => {
+                        const { projectPath } = getProjectContext();
+                        // Handle both 'name' and 'value' as the main parameter (in case of naming conflicts)
+                        const mainParamValue = args.name ?? args.value;
+                        const transformedArgs = { [subCommandName]: mainParamValue, ...args };
+                        const result = await executeMcpOperation(command.name, transformedArgs, projectPath);
+                        return {
+                            content: [{ type: 'text' as const, text: result }],
+                        };
+                    },
+                );
             }
         }
     }
 }
 
-function registerAnalysisTool(server: FastMCP): void {
-    server.addTool({
-        name: 'vendure_analyse',
-        description: 'Run a project analysis task. Specify which analysis to run.',
-        parameters: analysisSchema,
-        execute: async ({ task }) => {
+function registerAnalysisTool(server: McpServer): void {
+    const taskNames = analysisTasks.map(t => t.name) as [string, ...string[]];
+    const taskDescriptions = analysisTasks.map(t => `- ${t.name}: ${t.description}`).join('\n');
+
+    const analysisInputSchema = {
+        task: z.enum(taskNames).describe(`The analysis task to run:\n${taskDescriptions}`),
+    };
+
+    server.registerTool(
+        'vendure_analyse',
+        {
+            description: 'Run a project analysis task. Specify which analysis to run.',
+            inputSchema: analysisInputSchema,
+        },
+        async ({ task }: { task: string }) => {
             const { projectPath } = getProjectContext();
             const selectedTask = analysisTasks.find(t => t.name === task);
             if (!selectedTask) {
-                return `Error: Analysis task "${task}" not found.`;
+                return {
+                    content: [{ type: 'text' as const, text: `Error: Analysis task "${task}" not found.` }],
+                };
             }
-            return selectedTask.handler(projectPath);
+            const result = selectedTask.handler(projectPath);
+            return {
+                content: [{ type: 'text' as const, text: result }],
+            };
         },
-    });
+    );
 }
