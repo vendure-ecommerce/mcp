@@ -2,15 +2,15 @@ import { cliCommands } from '@vendure/cli/dist/commands/command-declarations.js'
 import type { FastMCP } from 'fastmcp';
 
 import { getProjectContext } from '../project-context.js';
-import { baseSchema } from '../schemas/index.js';
+import { analysisSchema } from '../schemas/index.js';
 import { commandSchemas } from '../schemas/schema-generator.js';
-import { analyzeProjectStructure, checkVendureInstallation, listPlugins } from '../tools/project-analyzer.js';
 import { executeMcpOperation } from '../utils/cli-executor.js';
+
+import { analysisTasks } from './analysis-tasks-declarations.js';
 
 export function registerAllTools(server: FastMCP): void {
     registerCliCommandTools(server);
-    registerUtilityTools(server);
-    registerProjectAnalysisTools(server);
+    registerAnalysisTool(server);
 }
 
 function registerCliCommandTools(server: FastMCP): void {
@@ -30,45 +30,18 @@ function registerCliCommandTools(server: FastMCP): void {
     }
 }
 
-function registerUtilityTools(server: FastMCP): void {
+function registerAnalysisTool(server: FastMCP): void {
     server.addTool({
-        name: 'list_commands',
-        description: '',
-        parameters: baseSchema,
-        execute: async () => {
+        name: 'vendure_analyse',
+        description: 'Run a project analysis task. Specify which analysis to run.',
+        parameters: analysisSchema,
+        execute: async ({ task }) => {
             const { projectPath } = getProjectContext();
-            const commandsList = cliCommands.map(cmd => `- ${cmd.name}: ${cmd.description}`).join('\n');
-            return `Available Vendure CLI commands via MCP:\n\n${commandsList}\n\nProject path: ${projectPath}`;
-        },
-    });
-}
-
-function registerProjectAnalysisTools(server: FastMCP): void {
-    const { projectPath } = getProjectContext();
-    server.addTool({
-        name: 'list_plugins',
-        description: '',
-        parameters: baseSchema,
-        execute: async () => {
-            return listPlugins(projectPath);
-        },
-    });
-
-    server.addTool({
-        name: 'analyze_project_structure',
-        description: '',
-        parameters: baseSchema,
-        execute: async () => {
-            return analyzeProjectStructure(projectPath);
-        },
-    });
-
-    server.addTool({
-        name: 'check_vendure_installation',
-        description: '',
-        parameters: baseSchema,
-        execute: async () => {
-            return checkVendureInstallation(projectPath);
+            const selectedTask = analysisTasks.find(t => t.name === task);
+            if (!selectedTask) {
+                return `Error: Analysis task "${task}" not found.`;
+            }
+            return selectedTask.handler(projectPath);
         },
     });
 }
