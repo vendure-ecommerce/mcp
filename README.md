@@ -1,3 +1,26 @@
+<p align="center">
+  <a href="https://vendure.io">
+    <img alt="Vendure logo" height="60" width="auto" src="https://a.storyblok.com/f/192301/252x200/c6608214a9/brand-icon-primary.svg">
+  </a>
+</p>
+
+<h1 align="center">
+  Vendure Public Demo
+</h1>
+<p align="center">
+    This is a demo project used as the basis for the public shared Vendure demo.
+</p>
+
+<p align="center">
+  <a href="https://vendure.io/community">
+    <img src="https://img.shields.io/badge/join-our%20discord-7289DA.svg" alt="Join our Discord" />
+  </a>
+  <a href="https://twitter.com/intent/follow?screen_name=vendure_io">
+    <img src="https://img.shields.io/twitter/follow/vendure_io" alt="Follow @vendure_io" />
+  </a>
+</p>
+
+
 # Vendure MCP Server
 
 A standalone Model Context Protocol (MCP) server for Vendure CLI orchestration. This package runs on a per-project basis, allowing external clients like Cursor to interact with your local Vendure project's CLI commands in a programmatic and context-aware way.
