@@ -1,10 +1,5 @@
 import { z } from 'zod';
 
-/**
- * Base schema for operations.
- */
-export const baseSchema = z.object({});
-
 export const analysisSchema = z.object({
     task: z
         .enum(['list_plugins', 'analyze_project_structure', 'check_vendure_installation'])
