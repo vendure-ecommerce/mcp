@@ -5,12 +5,7 @@ import type {
 } from '@vendure/cli/dist/shared/cli-command-definition.js';
 import { z } from 'zod';
 
-function convertToParameterName(longOption: string): string {
-    return longOption
-        .replace(/^--/, '')
-        .replace(/ .*$/, '')
-        .replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
-}
+import { convertToParameterName } from '../utils/command-parser.js';
 
 function createZodFieldFromOption(option: CliCommandOption): z.ZodTypeAny {
     const hasValue = option.long.includes('<') || option.long.includes('[');
@@ -29,32 +24,42 @@ function createZodFieldFromOption(option: CliCommandOption): z.ZodTypeAny {
     return isRequired ? baseType : baseType.optional();
 }
 
-function generateSchemaFromCommand(command: CliCommandDefinition): z.ZodObject<any> {
-    const schemaFields: Record<string, z.ZodTypeAny> = {};
+function generateSchemaFromCommand(command: CliCommandDefinition) {
+    const mainCommandFields: Record<string, z.ZodTypeAny> = {};
+    const subCommandSchemas: Record<string, z.ZodObject<any>> = {};
 
     if (!command.options?.length) {
-        return z.object({});
+        return z.object({
+            mainCommand: z.object({}),
+            subCommands: z.object({}),
+        });
     }
 
     command.options.forEach(option => {
         const paramName = convertToParameterName(option.long);
-        schemaFields[paramName] = createZodFieldFromOption(option);
 
         if (option.subOptions?.length) {
+            const subCommandFields: Record<string, z.ZodTypeAny> = {};
             option.subOptions.forEach(subOption => {
                 const subParamName = convertToParameterName(subOption.long);
-                schemaFields[subParamName] = createZodFieldFromOption(subOption);
+                subCommandFields[subParamName] = createZodFieldFromOption(subOption);
             });
+            subCommandSchemas[paramName] = z.object(subCommandFields);
+        } else {
+            mainCommandFields[paramName] = createZodFieldFromOption(option);
         }
     });
 
-    return z.object(schemaFields);
+    return {
+        mainCommand: z.object(mainCommandFields),
+        subCommands: subCommandSchemas,
+    };
 }
 
-export const commandSchemas: Record<string, z.ZodObject<any>> = cliCommands.reduce(
+export const commandSchemas: Record<string, any> = cliCommands.reduce(
     (acc, command) => {
         acc[command.name] = generateSchemaFromCommand(command);
         return acc;
     },
-    {} as Record<string, z.ZodObject<any>>,
+    {} as Record<string, any>,
 );

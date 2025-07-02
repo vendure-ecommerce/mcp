@@ -5,6 +5,7 @@ import { getProjectContext } from '../project-context.js';
 import { analysisSchema } from '../schemas/index.js';
 import { commandSchemas } from '../schemas/schema-generator.js';
 import { executeMcpOperation } from '../utils/cli-executor.js';
+import { convertToParameterName } from '../utils/command-parser.js';
 
 import { analysisTasks } from './analysis-tasks-declarations.js';
 
@@ -15,18 +16,39 @@ export function registerAllTools(server: FastMCP): void {
 
 function registerCliCommandTools(server: FastMCP): void {
     for (const command of cliCommands) {
-        const schema = commandSchemas[command.name];
-        const hasOptions = command.options && command.options.length > 0;
+        const commandSchema = commandSchemas[command.name];
 
+        // Register main command
         server.addTool({
             name: `vendure_${command.name}`,
-            description: '',
-            ...(hasOptions && { parameters: schema }),
+            description: command.description,
+            ...(command.options && command.options.length > 0 && { parameters: commandSchema.mainCommand }),
             execute: async args => {
                 const { projectPath } = getProjectContext();
-                return await executeMcpOperation(command.name, args, projectPath);
+                return executeMcpOperation(command.name, args, projectPath);
             },
         });
+
+        // Register sub-commands
+        if (commandSchema.subCommands) {
+            for (const subCommandName of Object.keys(commandSchema.subCommands)) {
+                const subCommandSchema = commandSchema.subCommands[subCommandName];
+                const subCommandOption = command.options?.find(
+                    o => convertToParameterName(o.long) === subCommandName,
+                );
+
+                server.addTool({
+                    name: `vendure_${command.name}_${subCommandName}`,
+                    description: `${subCommandOption?.description} (used in "vendure ${command.name}")`,
+                    parameters: subCommandSchema,
+                    execute: async args => {
+                        const { projectPath } = getProjectContext();
+                        const transformedArgs = { [subCommandName]: args.name, ...args };
+                        return executeMcpOperation(command.name, transformedArgs, projectPath);
+                    },
+                });
+            }
+        }
     }
 }
 
