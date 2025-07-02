@@ -51,23 +51,23 @@ export function listPlugins(projectPath: string): string {
             }
         }
 
-        let result = `📁 Vendure Project: ${absoluteProjectPath}\n\n`;
+        let result = `Vendure Project: ${absoluteProjectPath}\n\n`;
 
         if (plugins.length > 0) {
-            result += `🔌 Custom Plugins Found (${plugins.length}):\n`;
+            result += `Custom Plugins Found (${plugins.length}):\n`;
             plugins.forEach(plugin => (result += `  • ${plugin}\n`));
             result += '\n';
         } else {
-            result += '🔌 No custom plugins found in standard directories\n\n';
+            result += 'No custom plugins found in standard directories\n\n';
         }
 
         if (importedPlugins.length > 0) {
-            result += `📦 Plugin Imports in Config (${importedPlugins.length}):\n`;
+            result += `Plugin Imports in Config (${importedPlugins.length}):\n`;
             importedPlugins.forEach(imp => (result += `  • ${imp}\n`));
             result += '\n';
         }
 
-        result += '💡 Tip: Use `vendure_add` with `plugin` parameter to create new plugins';
+        result += 'Tip: Use `vendure_add` with `plugin` parameter to create new plugins';
 
         return result;
     } catch (error) {
@@ -141,10 +141,10 @@ export function analyzeProjectStructure(projectPath: string): string {
             }
         });
 
-        let result = `📊 Project Structure Analysis: ${path.basename(absoluteProjectPath)}\n`;
-        result += `📁 Path: ${absoluteProjectPath}\n\n`;
+        let result = `Project Structure Analysis: ${path.basename(absoluteProjectPath)}\n`;
+        result += `Path: ${absoluteProjectPath}\n\n`;
 
-        result += `🏗️  Entities (${analysis.entities.length}):\n`;
+        result += `Entities (${analysis.entities.length}):\n`;
         if (analysis.entities.length > 0) {
             analysis.entities.forEach(entity => (result += `  • ${entity}\n`));
         } else {
@@ -152,7 +152,7 @@ export function analyzeProjectStructure(projectPath: string): string {
         }
         result += '\n';
 
-        result += `⚙️  Services (${analysis.services.length}):\n`;
+        result += `Services (${analysis.services.length}):\n`;
         if (analysis.services.length > 0) {
             analysis.services.forEach(service => (result += `  • ${service}\n`));
         } else {
@@ -160,7 +160,7 @@ export function analyzeProjectStructure(projectPath: string): string {
         }
         result += '\n';
 
-        result += `🔌 Plugins (${analysis.plugins.length}):\n`;
+        result += `Plugins (${analysis.plugins.length}):\n`;
         if (analysis.plugins.length > 0) {
             analysis.plugins.forEach(plugin => (result += `  • ${plugin}\n`));
         } else {
@@ -168,7 +168,7 @@ export function analyzeProjectStructure(projectPath: string): string {
         }
         result += '\n';
 
-        result += `🗄️  Migrations (${analysis.migrations.length}):\n`;
+        result += `Migrations (${analysis.migrations.length}):\n`;
         if (analysis.migrations.length > 0) {
             analysis.migrations.slice(0, 5).forEach(migration => (result += `  • ${migration}\n`));
             if (analysis.migrations.length > 5) {
@@ -179,7 +179,7 @@ export function analyzeProjectStructure(projectPath: string): string {
         }
         result += '\n';
 
-        result += `📋 Config Files (${analysis.configFiles.length}):\n`;
+        result += `Config Files (${analysis.configFiles.length}):\n`;
         analysis.configFiles.forEach(config => (result += `  • ${config}\n`));
 
         return result;
@@ -202,14 +202,14 @@ export function checkVendureInstallation(projectPath: string): string {
         const vendureBin = path.join(absoluteProjectPath, 'node_modules', '.bin', 'vendure');
         const packageJsonPath = path.join(absoluteProjectPath, 'package.json');
 
-        let result = `🔍 Vendure Installation Check: ${path.basename(absoluteProjectPath)}\n\n`;
+        let result = `Vendure Installation Check: ${path.basename(absoluteProjectPath)}\n\n`;
 
         if (fs.existsSync(vendureBin)) {
-            result += '✅ Vendure CLI binary found\n';
-            result += `📍 Location: ${vendureBin}\n`;
+            result += 'Vendure CLI binary found\n';
+            result += `Location: ${vendureBin}\n`;
         } else {
-            result += '❌ Vendure CLI binary not found\n';
-            result += '💡 Install with: npm install @vendure/cli\n';
+            result += 'Vendure CLI binary not found\n';
+            result += 'Install with: npm install @vendure/cli\n';
         }
 
         if (fs.existsSync(packageJsonPath)) {
@@ -225,25 +225,25 @@ export function checkVendureInstallation(projectPath: string): string {
                 .sort();
 
             if (vendureDeps.length > 0) {
-                result += `\n📦 Vendure Dependencies (${vendureDeps.length}):\n`;
+                result += `\nVendure Dependencies (${vendureDeps.length}):\n`;
                 vendureDeps.forEach(([name, version]) => {
                     const versionStr = String(version);
-                    result += `  • ${name}: ${versionStr}\n`;
+                    result += ` - ${name}: ${versionStr}\n`;
                 });
             } else {
-                result += '\n❌ No Vendure dependencies found in package.json\n';
+                result += '\nNo Vendure dependencies found in package.json\n';
             }
 
-            result += '\n🔧 Environment:\n';
+            result += '\nEnvironment:\n';
             if (allDeps.typescript) {
                 const tsVersion = String(allDeps.typescript);
-                result += `  • TypeScript: ${tsVersion}\n`;
+                result += ` - TypeScript: ${tsVersion}\n`;
             }
             if (allDeps['@types/node']) {
                 const nodeTypesVersion = String(allDeps['@types/node']);
-                result += `  • Node Types: ${nodeTypesVersion}\n`;
+                result += ` - Node Types: ${nodeTypesVersion}\n`;
             }
-            result += `  • Node.js: ${process.version}\n`;
+            result += ` - Node.js: ${process.version}\n`;
         }
 
         return result;
