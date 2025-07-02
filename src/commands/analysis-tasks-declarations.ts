@@ -1,4 +1,9 @@
-import { analyzeProjectStructure, checkVendureInstallation, listPlugins } from '../tools/project-analyzer.js';
+import {
+    analyzeProjectStructure,
+    checkVendureInstallation,
+    getDatabaseType,
+    listPlugins,
+} from '../tools/project-analyzer.js';
 
 export const analysisTasks = [
     {
@@ -15,5 +20,10 @@ export const analysisTasks = [
         name: 'check_vendure_installation',
         description: 'Checks if a Vendure project is correctly installed in the current directory.',
         handler: checkVendureInstallation,
+    },
+    {
+        name: 'get_database_type',
+        description: 'Checks what database the vendure project is using.',
+        handler: getDatabaseType,
     },
 ] as const;

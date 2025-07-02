@@ -45,6 +45,7 @@
         "example-config.json"
     ],
     "dependencies": {
+        "dotenv": "^16.4.5",
         "fastmcp": "^1.0.0",
         "zod": "^3.23.8"
     },
@@ -54,6 +55,7 @@
     "devDependencies": {
         "@commitlint/cli": "^19.1.0",
         "@commitlint/config-conventional": "^19.1.0",
+        "@types/dotenv": "^8.2.0",
         "@types/node": "^20.0.0",
         "@typescript-eslint/eslint-plugin": "^6.21.0",
         "@typescript-eslint/parser": "^6.21.0",

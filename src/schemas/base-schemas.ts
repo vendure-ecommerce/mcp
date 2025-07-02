@@ -1,9 +1,10 @@
 import { z } from 'zod';
 
+import { analysisTasks } from '../commands/analysis-tasks-declarations.js';
+
+const taskNames = analysisTasks.map(t => t.name) as [string, ...string[]];
+const taskDescriptions = analysisTasks.map(t => `- ${t.name}: ${t.description}`).join('\n');
+
 export const analysisSchema = z.object({
-    task: z
-        .enum(['list_plugins', 'analyze_project_structure', 'check_vendure_installation'])
-        .describe(
-            'The analysis task to run:\n- list_plugins: Lists all discovered plugins in the project.\n- analyze_project_structure: Scans and analyzes the project folder structure.\n- check_vendure_installation: Checks if a Vendure project is correctly installed in the current directory.',
-        ),
+    task: z.enum(taskNames).describe(`The analysis task to run:\n${taskDescriptions}`),
 });
