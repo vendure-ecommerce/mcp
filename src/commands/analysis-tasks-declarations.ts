@@ -3,7 +3,7 @@ import {
     checkVendureInstallation,
     getDatabaseType,
     listPlugins,
-} from '../tools/project-analyzer.js';
+} from '../tools/analyzers/index.js';
 
 export const analysisTasks = [
     {
