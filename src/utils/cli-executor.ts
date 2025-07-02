@@ -4,7 +4,7 @@ import { spawn } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
-export async function executeVendureCommand(args: string[], projectPath: string): Promise<string> {
+async function executeVendureCommand(args: string[], projectPath: string): Promise<string> {
     return new Promise((resolve, reject) => {
         const vendureBin = path.join(projectPath, 'node_modules', '.bin', 'vendure');
 
@@ -79,7 +79,7 @@ export async function executeMcpOperation(
     }
 }
 
-export function formatOptionsForCli(options: Record<string, any>): string[] {
+function formatOptionsForCli(options: Record<string, any>): string[] {
     const args: string[] = [];
 
     for (const [key, value] of Object.entries(options)) {

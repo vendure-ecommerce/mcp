@@ -1,16 +1,6 @@
 import path from 'path';
 
-export interface ServerArgs {
-    transport: 'stdio' | 'http';
-    port: number;
-    host: string;
-    projectPath: string;
-}
-
-/**
- * Parses command-line arguments to configure the server.
- */
-export function parseArgs(): ServerArgs {
+export function parseArgs() {
     const rawArgs = process.argv.slice(2);
 
     const transportArg = rawArgs.includes('--transport')
