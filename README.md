@@ -5,10 +5,11 @@
 </p>
 
 <h1 align="center">
-  Vendure Public Demo
+  Vendure MCP Server
 </h1>
 <p align="center">
-    This is a demo project used as the basis for the public shared Vendure demo.
+    A standalone Model Context Protocol (MCP) server for Vendure CLI orchestration. This package runs on a per-project basis, allowing external clients like Cursor to interact with your local Vendure project's CLI commands in a programmatic and context-aware way.
+
 </p>
 
 <p align="center">
@@ -20,10 +21,6 @@
   </a>
 </p>
 
-
-# Vendure MCP Server
-
-A standalone Model Context Protocol (MCP) server for Vendure CLI orchestration. This package runs on a per-project basis, allowing external clients like Cursor to interact with your local Vendure project's CLI commands in a programmatic and context-aware way.
 
 ## Features
 
@@ -60,12 +57,10 @@ This is the simplest and most direct way to connect.
 ```json
 {
   "mcpServers": {
-    "vendure": {
+    "vendure-local-project": {
       "command": "npx",
       "args": [
-        "--package",
         "@vendure/mcp-server",
-        "vendure-mcp",
         "--projectPath",
         "/path/to/your/vendure-project"
       ]
@@ -75,11 +70,15 @@ This is the simplest and most direct way to connect.
 ```
 **Note**: You must replace `/path/to/your/vendure-project` with the **absolute path** to your Vendure project's root directory.
 
+> [!WARNING]
+> If you're using a version of version of Vendure < 3.4, the MCP will not work since it relies on features in the CLI package that are not avalible in previous version. 
+> You would need at least need to change the `@vendure/cli` to a version later than 3.4.0.
+
 #### Option 2: HTTP Connection
 
 If your client does not support STDIO or you need to connect over a network, you can run the server in HTTP mode.
 
-First, start the server from your terminal in your Vendure project's root directory:
+First, start the server from your terminal in your **Vendure project's root directory**:
 ```bash
 npx vendure-mcp --transport http --projectPath .
 ```
