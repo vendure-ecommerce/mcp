@@ -76,8 +76,9 @@ If your client does not support STDIO or you need to connect over a network, you
 
 First, start the server from your terminal in your **Vendure project's root directory**:
 ```bash
-npx vendure-mcp --transport http --projectPath .
+npx @vendure/mcp-server@latest --transport http --projectPath .
 ```
+
 This will start the server on the default port (8000), you can explicitly define the port by using the `--port <0000>` flag.
 
 Then, configure your `mcp.json` to connect to the running server's URL:
