@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { getProjectContext } from '../project-context.js';
 import { commandSchemas } from '../schemas/schema-generator.js';
 import { executeMcpOperation } from '../utils/cli-executor.js';
-import { convertToParameterName } from '../utils/command-parser.js';
+import { convertCamelToSnakeCase, convertToParameterName } from '../utils/command-parser.js';
 
 import { analysisTasks } from './analysis-tasks-declarations.js';
 
@@ -44,7 +44,7 @@ function registerCliCommandTools(server: McpServer): void {
                 );
 
                 server.registerTool(
-                    `vendure_${command.name}_${subCommandName}`,
+                    `vendure_${command.name}_${convertCamelToSnakeCase(subCommandName)}`,
                     {
                         description: `${subCommandOption?.description} (used in "vendure ${command.name}")`,
                         inputSchema: subCommandSchema.shape,
