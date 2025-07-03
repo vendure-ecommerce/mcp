@@ -24,7 +24,7 @@
 
 ## Features
 
-- **Deep Project Integration**: Operates directly within your Vendure project, providing context-aware tooling.
+- **Project Integration**: Operates directly within your Vendure project, providing context-aware tooling.
 - **CLI Integration**: Direct access to Vendure CLI `add` and `migrate` commands.
 - **Project Analysis**: Analyze project structure, list plugins, entities, and services.
 - **Dual Transport Support**: Connect via standard I/O (STDIO) for local clients like Cursor or via HTTP for networked clients.
@@ -60,10 +60,6 @@ This is the simplest and most direct way to connect.
 }
 ```
 **Note**: You must replace `/path/to/your/vendure-project` with the **absolute path** to your Vendure project's root directory.
-
-> [!WARNING]
-> If you're using a version of version of Vendure < 3.4, the MCP will not work since it relies on features in the CLI package that are not avalible in previous version. 
-> You would need at least need to change the `@vendure/cli` to a version later than 3.4.0.
 
 #### Option 2: HTTP Connection
 
@@ -112,6 +108,13 @@ To connect an MCP client to your local development server, use the `npm run dev`
 - **HTTP Mode**: `npm run dev:http -- --projectPath /path/to/your/test-vendure-project`
 
 Configure your `mcp.json` as described in the setup section to connect to your development server. The `--` is required to pass arguments to the npm script correctly.
+
+## Trouble-shooting and issue reports
+If you run into problems while using/running the MCP, we would appretiate any issue with information that would help us reproduce your issue.
+
+> [!TIP]
+> you can provide us with **MCP Logs** created by your MCP-Client.
+> In Cursor, you could find them by looking for `Developer: Open Log File...` > `MCP Logs` in your command palette (Shift+Cmd/Ctrl/Super+P) by default. 
 
 ## Links
 
