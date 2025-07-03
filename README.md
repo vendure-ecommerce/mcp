@@ -93,7 +93,7 @@ Then, configure your `mcp.json` to connect to the running server's URL:
 
 ## Development
 
-If you are contributing to the `vendure-mcp-server` itself, you'll want to run it from the source code.
+If you are contributing to the Vendure MCP Server itself, you'll want to run it from the source code.
 
 ### Build from Source
 ```bash
