@@ -52,6 +52,7 @@ coverage/
 # Build and cache
 *.cache
 .eslintcache
+.vendure-docs-cache/
 
 # Test and debugging
 .nyc_output/
@@ -68,4 +69,4 @@ pnpm-lock.yaml
 *.bak
 
 # Error logs
-lerna-debug.log 
+lerna-debug.log

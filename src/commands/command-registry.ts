@@ -6,12 +6,17 @@ import { getProjectContext } from '../project-context.js';
 import { commandSchemas } from '../schemas/schema-generator.js';
 import { executeMcpOperation } from '../utils/cli-executor.js';
 import { convertCamelToSnakeCase, convertToParameterName } from '../utils/command-parser.js';
+import { VendureDocsService } from '../utils/vendure-docs-service.js';
 
 import { analysisTasks } from './analysis-tasks-declarations.js';
+
+const vendureDocsService = new VendureDocsService();
 
 export function registerAllTools(server: McpServer): void {
     registerCliCommandTools(server);
     registerAnalysisTool(server);
+    registerResources(server);
+    registerDocTool(server);
 }
 
 function registerCliCommandTools(server: McpServer): void {
@@ -90,6 +95,78 @@ function registerAnalysisTool(server: McpServer): void {
             const result = selectedTask.handler(projectPath);
             return {
                 content: [{ type: 'text' as const, text: result }],
+            };
+        },
+    );
+}
+
+function registerDocTool(server: McpServer): void {
+    const docTypeEnum = z.enum(['full', 'standard']).describe('The type of documentation to retrieve.');
+
+    server.registerTool(
+        'vendure_get_docs',
+        {
+            description:
+                'Retrieves Vendure documentation. Specify "full" for the complete version or "standard" for the overview.',
+            inputSchema: {
+                type: docTypeEnum,
+            },
+        },
+        async ({ type }: { type: 'full' | 'standard' }) => {
+            let content = '';
+            if (type === 'full') {
+                content = await vendureDocsService.getLlmsFullTxt();
+            } else {
+                content = await vendureDocsService.getLlmsTxt();
+            }
+            return {
+                content: [{ type: 'text' as const, text: content }],
+            };
+        },
+    );
+}
+
+function registerResources(server: McpServer): void {
+    // Register llms.txt resource
+    server.registerResource(
+        'vendure-llms-txt',
+        'vendure://llms.txt',
+        {
+            name: 'Vendure Documentation Overview',
+            description: 'Structured overview of Vendure concepts and documentation links for AI context',
+            mimeType: 'text/plain',
+        },
+        async (uri: URL) => {
+            const llmsContent = await vendureDocsService.getLlmsTxt();
+            return {
+                contents: [
+                    {
+                        uri: uri.toString(),
+                        text: llmsContent,
+                    },
+                ],
+            };
+        },
+    );
+
+    // Register llms-full.txt resource
+    server.registerResource(
+        'vendure-llms-full-txt',
+        'vendure://llms-full.txt',
+        {
+            name: 'Comprehensive Vendure Documentation',
+            description: 'Complete Vendure documentation and API reference for detailed context',
+            mimeType: 'text/plain',
+        },
+        async (uri: URL) => {
+            const llmsFullContent = await vendureDocsService.getLlmsFullTxt();
+            return {
+                contents: [
+                    {
+                        uri: uri.toString(),
+                        text: llmsFullContent,
+                    },
+                ],
             };
         },
     );

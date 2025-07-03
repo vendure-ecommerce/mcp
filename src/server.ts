@@ -23,10 +23,18 @@ async function main() {
 
     initializeProjectContext(projectPath);
 
-    const server = new McpServer({
-        name: 'Vendure CLI Orchestrator',
-        version: '1.0.0',
-    });
+    const server = new McpServer(
+        {
+            name: 'Vendure CLI Orchestrator',
+            version: '1.0.0',
+        },
+        {
+            capabilities: {
+                resources: {},
+                tools: {},
+            },
+        },
+    );
 
     registerAllTools(server);
 
