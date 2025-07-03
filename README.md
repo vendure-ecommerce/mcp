@@ -84,7 +84,7 @@ Then, configure your `mcp.json` to connect to the running server's URL:
 {
     "mcpServers": {
         "vendure": {
-            "command": "http://localhost:8000/mcp"
+            "url": "http://localhost:8000/mcp"
         }
     }
 }
