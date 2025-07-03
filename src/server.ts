@@ -7,7 +7,7 @@ import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js';
 import express from 'express';
 import { randomUUID } from 'node:crypto';
 
-import { registerAllTools } from './commands/command-registry.js';
+import { registerAll } from './commands/command-registry.js';
 import { initializeProjectContext, validateProjectPath } from './project-context.js';
 import { parseArgs } from './utils/server-args.js';
 
@@ -36,7 +36,7 @@ async function main() {
         },
     );
 
-    registerAllTools(server);
+    registerAll(server);
 
     if (transport === 'http') {
         console.log(`Starting Vendure CLI MCP Server (HTTP) on http://${host}:${port}/mcp`);
