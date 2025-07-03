@@ -1,6 +1,6 @@
 {
     "name": "@vendure/mcp-server",
-    "version": "1.0.0-alpha",
+    "version": "1.0.1-alpha",
     "description": "The official Vendure MCP server",
     "publishConfig": {
         "access": "public"
@@ -51,7 +51,7 @@
         "zod": "^3.23.8"
     },
     "peerDependencies": {
-        "@vendure/cli": "3.4.0-minor-202506250934"
+        "@vendure/cli": "minor"
     },
     "devDependencies": {
         "@commitlint/cli": "^19.1.0",
@@ -61,7 +61,7 @@
         "@types/node": "^20.0.0",
         "@typescript-eslint/eslint-plugin": "^6.21.0",
         "@typescript-eslint/parser": "^6.21.0",
-        "@vendure/cli": "3.4.0-minor-202506250934",
+        "@vendure/cli": "minor",
         "eslint": "^8.41.0",
         "eslint-config-prettier": "^8.10.0",
         "eslint-plugin-import": "^2.32.0",

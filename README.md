@@ -35,16 +35,7 @@
 
 The server is designed to be installed and run directly from your Vendure project. This ensures it always has access to the correct dependencies and project context.
 
-### Step 1: Install in Your Vendure Project
-
-Navigate to your Vendure project's root directory and install the server as a development dependency:
-
-In your Vendure project's root directory
-```bash
-npm install @vendure/mcp-server --save-dev
-```
-
-### Step 2: Configure Your MCP Client (e.g., Cursor)
+Configure Your MCP Client (e.g., Cursor)
 
 Create or update the `mcp.json` file used by your MCP client. This file is typically located at `.cursor/mcp.json` inside your project's root folder.
 
@@ -57,10 +48,10 @@ This is the simplest and most direct way to connect.
 ```json
 {
   "mcpServers": {
-    "vendure-local-project": {
+    "vendure-local-mcp": {
       "command": "npx",
       "args": [
-        "@vendure/mcp-server",
+        "@vendure/mcp-server@latest",
         "--projectPath",
         "/path/to/your/vendure-project"
       ]
