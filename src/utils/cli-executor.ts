@@ -1,5 +1,3 @@
-import type { AddOperationOptions } from '@vendure/cli/dist/commands/add/add-operations.js';
-import { performAddOperation } from '@vendure/cli/dist/commands/add/add-operations.js';
 import { spawn } from 'child_process';
 import fs from 'fs';
 import path from 'path';
@@ -59,19 +57,9 @@ export async function executeMcpOperation(
     projectPath: string,
 ): Promise<string> {
     try {
-        if (commandName === 'add') {
-            const result = await performAddOperation({ ...options, projectPath } as AddOperationOptions);
-
-            if (result.success) {
-                return result.message;
-            } else {
-                throw new Error(result.message);
-            }
-        } else {
-            const cliArgs = [commandName, ...formatOptionsForCli(options)];
-            const result = await executeVendureCommand(cliArgs, projectPath);
-            return `${commandName} operation completed successfully.\n\nOutput:\n${result}`;
-        }
+        const cliArgs = [commandName, ...formatOptionsForCli(options)];
+        const result = await executeVendureCommand(cliArgs, projectPath);
+        return `${commandName} operation completed successfully.\n\nOutput:\n${result}`;
     } catch (error) {
         throw new Error(
             `Failed to execute ${commandName}: ${error instanceof Error ? error.message : String(error)}`,
