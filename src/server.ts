@@ -39,8 +39,8 @@ async function main() {
     registerAll(server);
 
     if (transport === 'http') {
-        console.log(`Starting Vendure CLI MCP Server (HTTP) on http://${host}:${port}/mcp`);
-        console.log(`Project context: ${projectPath}`);
+        console.error(`Starting Vendure CLI MCP Server (HTTP) on http://${host}:${port}/mcp`);
+        console.error(`Project context: ${projectPath}`);
 
         const app = express();
         app.use(express.json());
@@ -113,7 +113,7 @@ async function main() {
 
         app.listen(port, host);
     } else {
-        console.log(`Starting Vendure CLI MCP Server (STDIO) for project: ${projectPath}`);
+        console.error(`Starting Vendure CLI MCP Server (STDIO) for project: ${projectPath}`);
         const stdioTransport = new StdioServerTransport();
         await server.connect(stdioTransport);
     }

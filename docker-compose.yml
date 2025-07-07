@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  vendure-mcp:
+    build: .
+    image: vendure-mcp:latest
+    volumes:
+      # Mount your Vendure project directory here
+      - ${PROJECT_PATH:-./example-project}:/workspace
+    environment:
+      - PROJECT_PATH=/workspace
+    stdin_open: true
+    tty: true
+    command: ["--projectPath", "/workspace"]
+
+  # Example for HTTP mode (useful for debugging)
+  vendure-mcp-http:
+    build: .
+    image: vendure-mcp:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - ${PROJECT_PATH:-./example-project}:/workspace
+    environment:
+      - PROJECT_PATH=/workspace
+    command: ["--transport", "http", "--projectPath", "/workspace", "--host", "0.0.0.0"]

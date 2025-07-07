@@ -34,7 +34,7 @@
         "lint": "eslint --fix src/**/*.ts",
         "format": "prettier --write src/**/*.ts",
         "prepare": "husky install",
-        "prepublishOnly": "npm run build"
+        "docker:build": "docker build -t vendure-mcp ."
     },
     "bin": {
         "vendure-mcp": "dist/server.js"
