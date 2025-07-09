@@ -96,8 +96,7 @@ Then, configure your `mcp.json` to connect to the running server's URL:
 
 #### Option 3: Docker
 
-> [!IMPORTANT]
-> You must replace `/path/to-your-vendure-project` with the **absolute path** to your Vendure project's root directory.
+This will start a Docker container and the server will run through in stdio mode. Refer to the [Docker Guide](https://github.com/vendure-ecommerce/mcp/blob/master/README-Docker.md) for more information about running with Docker.
 
 ```json
 {
@@ -121,7 +120,8 @@ Then, configure your `mcp.json` to connect to the running server's URL:
 }
 ```
 
-This will start a Docker container and the server will run through in stdio mode. Refer to the [Docker Guide](https://github.com/vendure-ecommerce/mcp/blob/master/README-Docker.md) for more information about running with Docker.
+> [!IMPORTANT]
+> You must replace `/path/to-your-vendure-project` with the **absolute path** to your Vendure project's root directory.
 
 ## Development
 
