@@ -28,6 +28,7 @@
 - **Project Analysis**: Analyze project structure, list plugins, entities, and services.
 - **Dual Transport Support**: Connect via standard I/O (STDIO) for local clients like Cursor or via HTTP for networked clients.
 - **Environment Check**: Verify Vendure installation and dependencies within the project.
+- **Access to Docs**: The MCP can fetch the official Vendure docs to use as context whenever it needs to. 
 - **Real-time**: Works with any local Vendure project without modification.
 
 ## Dynamic CLI Integration
