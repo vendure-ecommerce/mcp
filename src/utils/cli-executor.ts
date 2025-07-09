@@ -2,8 +2,6 @@ import { spawn } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
-import { stripAnsi } from './string-utils.js';
-
 async function executeVendureCommand(args: string[], projectPath: string): Promise<string> {
     return new Promise((resolve, reject) => {
         const vendureBin = path.join(projectPath, 'node_modules', '.bin', 'vendure');
@@ -61,12 +59,11 @@ export async function executeMcpOperation(
     try {
         const cliArgs = [commandName, ...formatOptionsForCli(options)];
         const result = await executeVendureCommand(cliArgs, projectPath);
-        const cleanedResult = stripAnsi(result);
-        return `${commandName} operation completed successfully.\n\nOutput:\n${cleanedResult}`;
+        return `${commandName} operation completed successfully.\n\nOutput:\n${result}`;
     } catch (error) {
-        const originalError = error instanceof Error ? error.message : String(error);
-        const cleanedError = stripAnsi(originalError);
-        throw new Error(`Failed to execute ${commandName}: ${cleanedError}`);
+        throw new Error(
+            `Failed to execute ${commandName}: ${error instanceof Error ? error.message : String(error)}`,
+        );
     }
 }
 
