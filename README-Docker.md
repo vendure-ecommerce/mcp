@@ -24,8 +24,8 @@ _Replace `YOUR_GITHUB_USERNAME/YOUR_REPO_NAME` with the actual path to the repos
                 "--env",
                 "PROJECT_PATH=/workspace",
                 "--volume",
-                "/absolute/path/to/your/vendure/project:/workspace",
-                "ghcr.io/vendure-ecommerce/mcp:latest",
+                "/absolute/path/to-your-vendure-project:/workspace",
+                "vendure/mcp:latest",
                 "--projectPath",
                 "/workspace"
             ]
@@ -80,7 +80,7 @@ Add this configuration to your MCP client's configuration file. **You must use a
                 "--env",
                 "PROJECT_PATH=/workspace",
                 "--volume",
-                "/absolute/path/to/your/vendure/project:/workspace",
+                "/absolute/path-to-your-vendure-project:/workspace",
                 "vendure-mcp:latest",
                 "--projectPath",
                 "/workspace"
