@@ -42,6 +42,7 @@ The server dynamically generates MCP tools from your project's installed Vendure
 
 > [!WARNING]
 > To use the CLI command orchestration capabilities of the MCP. The target project should be running a version of the `@vendure/cli` package that is > 3.4.0 or later. Currently, this would be in our minor branch.
+>
 > To change the version of your package, open the `package.json` of your project and change the "@vendure/cli" version to "minor", then delete your `package-lock.json` file and `node_modules` folder and run `npm install`.
 
 The server is designed to be installed and run directly from your Vendure project. This ensures it always has access to the correct dependencies and project context.
