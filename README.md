@@ -28,7 +28,7 @@
 - **Project Analysis**: Analyze project structure, list plugins, entities, and services.
 - **Dual Transport Support**: Connect via standard I/O (STDIO) for local clients like Cursor or via HTTP for networked clients.
 - **Environment Check**: Verify Vendure installation and dependencies within the project.
-- **Access to Docs**: The MCP can fetch the official Vendure docs to use as context whenever it needs to. 
+- **Access to Docs**: The MCP can fetch the official Vendure docs to use as context whenever it needs to.
 - **Real-time**: Works with any local Vendure project without modification.
 
 ## Dynamic CLI Integration
@@ -54,7 +54,10 @@ Create or update the `mcp.json` file used by your MCP client. This file is typic
 
 Below are configurations for both STDIO and HTTP connections.
 
-#### Option 1: STDIO Connection (Recommended for Local Clients)
+> [!IMPORTANT]
+> You must restart your MCP client, e.g., Cursor IDE or Claude Code, to apply the changes.
+
+### Option 1: STDIO Connection (Recommended for Local Clients)
 
 This is the simplest and most direct way to connect.
 
@@ -70,9 +73,9 @@ This is the simplest and most direct way to connect.
 ```
 
 > [!IMPORTANT]
-> You must replace `/path/to/your/vendure-project` with the **absolute path** to your Vendure project's root directory.
+> You must replace `/path/to/your/vendure-project` with the **absolute path** to your Vendure project's root directory. The same path as your `vendure-config.ts`.
 
-#### Option 2: HTTP Connection
+### Option 2: HTTP Connection
 
 If your client does not support STDIO or you need to connect over a network, you can run the server in HTTP mode.
 
@@ -96,7 +99,7 @@ Then, configure your `mcp.json` to connect to the running server's URL:
 }
 ```
 
-#### Option 3: Docker
+### Option 3: Docker
 
 This will start a Docker container and the server will run through in stdio mode. Refer to the [Docker Guide](https://github.com/vendure-ecommerce/mcp/blob/master/README-Docker.md) for more information about running with Docker.
 
@@ -123,7 +126,7 @@ This will start a Docker container and the server will run through in stdio mode
 ```
 
 > [!IMPORTANT]
-> You must replace `/path/to-your-vendure-project` with the **absolute path** to your Vendure project's root directory.
+> You must replace `/path/to/your/vendure-project` with the **absolute path** to your Vendure project's root directory. The same path as your `vendure-config.ts`.
 
 ## Development
 
